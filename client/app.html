@@ -1,0 +1,24 @@
+<head>
+    <title>Meteorplate</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="row-fluid">
+            <div class="span3">
+                {{> mainmenu}}
+            </div>
+            <div class="span9">
+                {{> page_controller}}
+            </div>
+        </div>
+    </div>
+</body>
+
+<template name="page_controller">
+    {{#if isLoading}}
+        <h1>Loading...</h1>
+    {{else}}
+        {{{current_page}}}
+    {{/if}}
+</template>
