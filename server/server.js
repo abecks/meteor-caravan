@@ -22,8 +22,57 @@ Meteor.methods({
         var user = Meteor.users.findOne({ _id: this.userId });
         if(typeof user != 'undefined'){
             return Games.insert({
-                players: [user.username],
-                created: (new Date()).getTime()
+                player1: user.username,
+                player2: null,
+                created: (new Date()).getTime(),
+                caravans: [
+                    {
+                        'player1': {
+                            value: 0,
+                            cards: []
+                        },
+
+                        'player2': {
+                            value: 0,
+                            cards: []
+                        }
+                    },
+                    {
+                        'player1': {
+                            value: 0,
+                            cards: []
+                        },
+
+                        'player2': {
+                            value: 0,
+                            cards: []
+                        }
+                    },
+                    {
+                        'player1': {
+                            value: 0,
+                            cards: []
+                        },
+
+                        'player2': {
+                            value: 0,
+                            cards: []
+                        }
+                    }
+                ],
+                decks: {
+                    'player1': [
+                        {
+                            suit: 'hearts',
+                            value: 2
+                        },
+                        {
+                            suit: 'spades',
+                            value: 5
+                        }
+                    ],
+                    'player2': []
+                }
             });
         }else{
             return null;

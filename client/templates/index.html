@@ -6,9 +6,7 @@
     </p>
 
     {{#if currentUser}}
-        <p>You are currently logged in as {{user.username}}.</p>
-
-        {{> games}}
+        <button id="join-game" class="btn btn-large btn-primary">Find an opponent</button> or <button id="create-game" class="btn btn-large btn-success">Create a private match</button>
     {{ else }}
         <p>Please login to continue.</p>
     {{/if}}

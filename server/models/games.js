@@ -26,3 +26,11 @@ Meteor.publish('games', function () {
         }
     }
 });
+
+// Publish the user's match if it has one
+Meteor.publish('match', function(matchId){
+    if(this.userId === null) return null;
+
+    // Find the requested match
+    return Games.find({ _id: matchId });
+});

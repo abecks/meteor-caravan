@@ -5,6 +5,10 @@
             <li><a href="/about">About</a></li>
             <li><a href="/cards">Cards</a></li>
 
+            {{#if isAdmin }}
+            <li><a href="/games">Games</a></li>
+            {{/if}}
+
             {{#if currentUser}}
                 <li><a href="/logout" class="logout">Logout</a></li>
             {{else}}
