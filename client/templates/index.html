@@ -1,8 +1,16 @@
 <template name="index">
-    <h1>Meteor-Caravan!</h1>
+    <h1>Welcome to Caravan!</h1>
+
+    <p>
+        This is a project to bring the Fallout: New Vegas Caravan card game to the web.
+    </p>
 
     {{#if currentUser}}
         <p>You are currently logged in as {{user.username}}.</p>
+
+        {{> games}}
+    {{ else }}
+        <p>Please login to continue.</p>
     {{/if}}
 
 </template>

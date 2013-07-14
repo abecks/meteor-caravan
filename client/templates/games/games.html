@@ -1,0 +1,26 @@
+<template name="games">
+
+    <p>
+        <button id="join-game" class="btn btn-large btn-primary">Find an opponent</button> or <button id="create-game" class="btn btn-large btn-success">Create a private match</button>
+    </p>
+
+    <h1>Games In Progress</h1>
+    <table class="table table-bordered table-striped" id="games">
+        <thead>
+        <tr>
+            <th>Players</th>
+            <th>Created</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{#each games}}
+        <tr>
+            <td>{{players}}</td>
+            <td>{{created}}</td>
+        </tr>
+        {{/each}}
+        </tbody>
+    </table>
+
+    <button id="delete-games" class="btn btn-large btn-danger">Delete all games</button>
+</template>

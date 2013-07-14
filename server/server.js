@@ -1,40 +1,37 @@
 /**
- * Example server-side methods to delete collections.
+ * Server-side methods.
  */
 Meteor.methods({
-    'deleteServers': function(){
-        Servers.remove({});
+
+    'deleteGames': function(){
+        Games.remove({});
     },
+
     'deleteUsers': function(){
         Meteor.users.remove({});
+    },
+
+    // Find a game for the client, if no game is found, create one
+    'joinGame': function(){
+
+    },
+
+    // Create a private game for the client
+    'createGame': function(){
+        // Get username
+        var user = Meteor.users.findOne({ _id: this.userId });
+        if(typeof user != 'undefined'){
+            return Games.insert({
+                players: [user.username],
+                created: (new Date()).getTime()
+            });
+        }else{
+            return null;
+        }
     }
 });
 
 Meteor.startup(function () {
 
-    // Check to see if we have some example servers in the DB.
-    if(Servers.find().count() == 0){
-        var data = [
-            {
-                name: 'Localhost',
-                ip: '127.0.0.1',
-                type: 'Windows'
-            },
-            {
-                name: 'Google Talk',
-                ip: '74.125.141.125',
-                type: 'XMPP'
-            },
-            {
-                name: 'OpenDNS',
-                ip: '208.67.222.222',
-                type: 'DNS'
-            }
-        ];
-
-        for(var i = 0; i < data.length; i++){
-            Servers.insert(data[i]);
-        }
-    }
 });
 
