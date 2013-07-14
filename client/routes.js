@@ -10,8 +10,8 @@ var AppRouter = Backbone.Router.extend({
     index: function () {
         Session.set('action', 'index');
     },
-    match: function(match){
-        Session.set('match', match);
+    match: function(id){
+        Session.set('match', id);
         Session.set('action', 'match');
     },
     page: function(page){

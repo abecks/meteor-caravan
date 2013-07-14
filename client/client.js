@@ -22,19 +22,7 @@ Handlebars.registerHelper('isAdmin', function(){
 
 // Render a card
 Handlebars.registerHelper("card", function() {
-    console.log(this);
-
-    var valueKeyword;
-    switch(this.value){
-        case 2:
-            valueKeyword = 'two';
-            break;
-        case 5:
-            valueKeyword = 'five';
-            break;
-    }
-
-    return Template['card-'+this.suit+'-'+valueKeyword]();
+    return Template['card-'+this.suit+'-'+this.value]();
 });
 
 Meteor.startup(function(){
@@ -85,3 +73,4 @@ var joinGame = function(){
     // Ask the server for a game ID
     var game = Meteor.call('joinGame');
 };
+

@@ -1,8 +1,5 @@
-// Create minimongo object
+// Create minimongo objects
 Games = new Meteor.Collection("games");
-
-// Subscribe to 'servers' collection on startup.
-//var gamesHandle = Meteor.subscribe('games');
 
 Template.games.games = function () {
     return Games.find({}, {sort: {created: 'asc'}});

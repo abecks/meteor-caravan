@@ -1,18 +1,23 @@
 <template name="match">
-    <h1>Match #{{ matchId }}</h1>
 
-    Players: {{ match.players }}
-    <br>
-    Created: {{ match.created }}
+    {{#if matchLoaded}}
 
-    {{#each match.caravans}}
+        <h1>Match #{{ matchId }}</h1>
+
+        Player 1: {{ match.player1 }}
+        <br>
+        Player 2: {{ match.player2 }}
+        <br>
+        Created: {{ match.created }}
+
+        {{#each match.caravans}}
         {{> caravan}}
-    {{/each}}
-
-    <div class="deck">
-        <h2>Your Deck</h2>
-        {{#each match.decks.player1}}
-            {{{ card }}}
         {{/each}}
-    </div>
+
+        {{{ deck }}}
+
+    {{else}}
+        <h1>Loading...</h1>
+    {{/if }}
+
 </template>

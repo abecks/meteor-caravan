@@ -31,6 +31,6 @@ Meteor.publish('games', function () {
 Meteor.publish('match', function(matchId){
     if(this.userId === null) return null;
 
-    // Find the requested match
+    // Return cursor for client
     return Games.find({ _id: matchId });
 });

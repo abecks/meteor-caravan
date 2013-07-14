@@ -71,11 +71,38 @@ Meteor.methods({
                             value: 5
                         }
                     ],
-                    'player2': []
+                    'player2': [
+                        {
+                            suit: 'diamonds',
+                            value: 10
+                        },
+                        {
+                            suit: 'spades',
+                            value: 8
+                        },
+                        {
+                            suit: 'clubs',
+                            value: 2
+                        }
+                    ]
                 }
             });
         }else{
             return null;
+        }
+    },
+
+    // Join a specific match
+    seatPlayer: function(matchId){
+        // Seat the player
+        var game = Games.findOne({ _id: matchId }),
+            user = Meteor.users.findOne({ _id: this.userId });
+
+        console.log(game.player1, user.username, game.player2);
+        if(game.player1 != user.username && game.player2 == null){
+            return Games.update(game._id, {$set: {player2: user.username}});
+        }else{
+            return false;
         }
     }
 });
