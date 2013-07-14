@@ -1,0 +1,3 @@
+[submodule "public/helveticards"]
+	path = public/helveticards
+	url = https://github.com/zachwaugh/Helveticards.git
