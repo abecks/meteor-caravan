@@ -1,0 +1,11 @@
+<template name="index">
+    <h1>Welcome to Meteorplate!</h1>
+
+    {{#if currentUser}}
+        <p>You are currently logged in as {{user.username}}.</p>
+    {{/if}}
+
+    <p>I've setup a sample MongoDB collection called "servers".</p>
+
+    {{> servers}}
+</template>

@@ -1,0 +1,16 @@
+<template name="mainmenu">
+    <div id="main-menu">
+        <ul class="nav nav-tabs nav-stacked">
+            <li><a href="/" class="internal">Home</a></li>
+            <li><a href="/about">About</a></li>
+
+            {{#if currentUser}}
+                <li><a href="/logout" class="logout">Logout</a></li>
+            {{else}}
+                <li><a href="/login">Login</a></li>
+                <li><a href="/register">Register</a></li>
+            {{/if}}
+            <li><a href="http://google.ca" class="external">External Link</a></li>
+        </ul>
+    </div>
+</template>
