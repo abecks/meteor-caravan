@@ -1,11 +1,77 @@
 <template name="index">
-    <h1>Welcome to Meteorplate!</h1>
+    <h1>Meteor-Caravan!</h1>
 
     {{#if currentUser}}
         <p>You are currently logged in as {{user.username}}.</p>
     {{/if}}
 
-    <p>I've setup a sample MongoDB collection called "servers".</p>
+    <h2>Clubs</h2>
+    <div class="clearfix">
+        {{> card-clubs-two }}
+        {{> card-clubs-three }}
+        {{> card-clubs-four }}
+        {{> card-clubs-five }}
+        {{> card-clubs-six }}
+        {{> card-clubs-seven }}
+        {{> card-clubs-eight }}
+        {{> card-clubs-nine }}
+        {{> card-clubs-ten }}
+        {{> card-clubs-jack }}
+        {{> card-clubs-queen }}
+        {{> card-clubs-king }}
+        {{> card-clubs-ace }}
+    </div>
 
-    {{> servers}}
+
+    <h2>Diamonds</h2>
+    <div class="clearfix">
+        {{> card-diamonds-two }}
+        {{> card-diamonds-three }}
+        {{> card-diamonds-four }}
+        {{> card-diamonds-five }}
+        {{> card-diamonds-six }}
+        {{> card-diamonds-seven }}
+        {{> card-diamonds-eight }}
+        {{> card-diamonds-nine }}
+        {{> card-diamonds-ten }}
+        {{> card-diamonds-jack }}
+        {{> card-diamonds-queen }}
+        {{> card-diamonds-king }}
+        {{> card-diamonds-ace }}
+    </div>
+
+    <h2>Spades</h2>
+    <div class="clearfix">
+        {{> card-spades-two }}
+        {{> card-spades-three }}
+        {{> card-spades-four }}
+        {{> card-spades-five }}
+        {{> card-spades-six }}
+        {{> card-spades-seven }}
+        {{> card-spades-eight }}
+        {{> card-spades-nine }}
+        {{> card-spades-ten }}
+        {{> card-spades-jack }}
+        {{> card-spades-queen }}
+        {{> card-spades-king }}
+        {{> card-spades-ace }}
+    </div>
+
+    <h2>Hearts</h2>
+    <div class="clearfix">
+        {{> card-hearts-two }}
+        {{> card-hearts-three }}
+        {{> card-hearts-four }}
+        {{> card-hearts-five }}
+        {{> card-hearts-six }}
+        {{> card-hearts-seven }}
+        {{> card-hearts-eight }}
+        {{> card-hearts-nine }}
+        {{> card-hearts-ten }}
+        {{> card-hearts-jack }}
+        {{> card-hearts-queen }}
+        {{> card-hearts-king }}
+        {{> card-hearts-ace }}
+    </div>
+
 </template>
