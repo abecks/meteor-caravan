@@ -39,40 +39,158 @@ body{
         position:absolute;
         bottom:0;
         left:0;
-        .scale(0.5);
 
-        &:nth-child(1n+1){
-          bottom:20px;
-          left:20px;
-        }
         &:nth-child(1n+2){
-          bottom:40px;
-          left:15px;
+          bottom:30px
         }
         &:nth-child(1n+3){
-          bottom:60px;
-          left:30px;
+          bottom:60px
         }
         &:nth-child(1n+4){
-          bottom:80px;
-          left:25px;
+          bottom:90px
         }
         &:nth-child(1n+5){
-          bottom:100px;
-          left:20px;
+          bottom:120px
         }
         &:nth-child(1n+6){
-          bottom:120px;
-          left:15px;
+          bottom:150px
+        }
+        &:nth-child(1n+7){
+          bottom:180px
+        }
+        &:nth-child(1n+8){
+          bottom:210px
+        }
+        &:nth-child(1n+9){
+          bottom:240px
+        }
+        &:nth-child(1n+10){
+          bottom:270px
+        }
+        &:nth-child(1n+11){
+          bottom:300px
         }
       }
 
+    }
+
+    .player-2-cards{
+      .card{
+        bottom:auto;
+        top:0;
+
+        &:nth-child(1n+2){
+          top:30px
+        }
+        &:nth-child(1n+3){
+          top:60px
+        }
+        &:nth-child(1n+4){
+          top:90px
+        }
+        &:nth-child(1n+5){
+          top:120px
+        }
+        &:nth-child(1n+6){
+          top:150px
+        }
+        &:nth-child(1n+7){
+          top:180px
+        }
+        &:nth-child(1n+8){
+          top:210px
+        }
+        &:nth-child(1n+9){
+          top:240px
+        }
+        &:nth-child(1n+10){
+          top:270px
+        }
+        &:nth-child(1n+11){
+          top:300px
+        }
+      }
     }
   }
 }
 
 .card{
   cursor:pointer;
+  .box-shadow(~"0 0 5px rgba(0,0,0,0.5)");
+
+  width: 23vh;
+  height: 32.4vh;
+
+  .suit{
+    font-size:7.5vh;
+    height: auto;
+    line-height: 7vh;
+  }
+
+  .corner{
+    &.top{
+      top: 1.3vh;
+      left: 1vh;
+    }
+    &.bottom{
+      bottom: 1.3vh;
+      right: 1vh;
+    }
+    .number{
+      font-size:3.6vh;
+      line-height: 1;
+      height: auto;
+    }
+    span{
+      font-size:3vh;
+    }
+  }
+
+  .top_left,
+  .middle_left,
+  .bottom_left{
+    left: 3.6vh;
+  }
+
+  .top_right,
+  .middle_right,
+  .bottom_right{
+    right: 3.6vh;
+  }
+
+  .top_center,
+  .top_left,
+  .top_right{
+    top: 2.8vh;
+  }
+
+  .top_center,
+  .middle_center,
+  .bottom_center,
+  .middle_top,
+  .middle_bottom{
+    left:8.6vh;
+  }
+  .middle_top{
+    top:8vh;
+  }
+
+  .middle_center,
+  .middle_left,
+  .middle_right{
+    top:12.5vh;
+  }
+
+
+  .middle_bottom{
+    bottom:7vh;
+  }
+  .bottom_center,
+  .bottom_left,
+  .bottom_right{
+    bottom:2.7vh;
+  }
+
 
   &.active{
     background-color:green;
