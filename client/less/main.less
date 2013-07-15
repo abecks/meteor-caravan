@@ -114,41 +114,44 @@ body{
   }
 }
 
+@cardSizeRatio: 2.5;
 .card{
   cursor:pointer;
   .box-shadow(~"0 0 3px rgba(0,0,0,0.5)");
   .border-radius(6px);
 
-  width: 23vh / 2;
-  height: 32.4vh / 2;
+  width: 23vh / @cardSizeRatio;
+  height: 32.4vh / @cardSizeRatio;
 
   .suit{
-    font-size:7.5vh / 2;
+    font-size:7.5vh / @cardSizeRatio;
     height: auto;
-    line-height: 7vh / 2;
+    line-height: 7vh / @cardSizeRatio;
     width: 3.5vh;
   }
 
   &.ten .corner .number{
-    font-size:3.6vh / 2;
+    font-size:3.6vh / @cardSizeRatio;
   }
   .corner{
     &.top{
-      top: 1.3vh / 2;
-      left: 1vh / 2;
+      top: 1.3vh / @cardSizeRatio;
+      left: 1vh / @cardSizeRatio;
+      overflow:visible;
     }
     &.bottom{
-      bottom: 1.3vh / 2;
-      right: 1vh / 2;
+      bottom: 1.3vh / @cardSizeRatio;
+      right: 1vh / @cardSizeRatio;
       .rotate(180deg);
+      overflow:visible;
     }
     .number{
-      font-size:3.6vh / 2;
+      font-size:3.6vh / @cardSizeRatio;
       line-height: 1;
       height: auto;
     }
     span{
-      font-size:3vh / 2;
+      font-size:3vh / @cardSizeRatio;
     }
   }
 
@@ -157,7 +160,7 @@ body{
   .bottom_left,
   .middle_bottom_left,
   .middle_top_left{
-    left: 3.6vh / 2;
+    left: 3.6vh / @cardSizeRatio;
   }
 
   .top_right,
@@ -165,23 +168,23 @@ body{
   .bottom_right,
   .middle_bottom_right,
   .middle_top_right{
-    right: 3.6vh / 2;
+    right: 3.6vh / @cardSizeRatio;
   }
 
   .middle_top_left,
   .middle_top_right{
-    top: 8.8vh / 2;
+    top: 8.8vh / @cardSizeRatio;
   }
 
   .middle_bottom_left,
   .middle_bottom_right{
-    bottom:8.8vh / 2;
+    bottom:8.8vh / @cardSizeRatio;
   }
 
   .top_center,
   .top_left,
   .top_right{
-    top: 2.8vh / 2;
+    top: 2.8vh / @cardSizeRatio;
   }
 
   .top_center,
@@ -191,32 +194,33 @@ body{
   .middle_bottom,
   .middle_bottom_center,
   .middle_top_center{
-    left:8.2vh / 2;
+    left:50%;
+    margin-left:(3.5vh / 2) * -1;
   }
   .middle_top{
-    top:8vh / 2;
+    top:8vh / @cardSizeRatio;
   }
   .middle_top_center{
-    top:6.4vh / 2;
+    top:6.4vh / @cardSizeRatio;
   }
   .middle_bottom_center{
-    bottom:6.4vh / 2;
+    bottom:6.4vh / @cardSizeRatio;
   }
 
   .middle_center,
   .middle_left,
   .middle_right{
-    top:12.5vh / 2;
+    top:12.5vh / @cardSizeRatio;
   }
 
 
   .middle_bottom{
-    bottom:7vh / 2;
+    bottom:7vh / @cardSizeRatio;
   }
   .bottom_center,
   .bottom_left,
   .bottom_right{
-    bottom:2.7vh / 2;
+    bottom:2.7vh / @cardSizeRatio;
   }
 
   .middle_bottom,
