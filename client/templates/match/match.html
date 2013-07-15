@@ -10,9 +10,11 @@
         <br>
         Created: {{ match.created }}
 
+        <div class="caravans">
         {{#each match.caravans}}
         {{> caravan}}
         {{/each}}
+        </div>
 
         {{{ deck }}}
 

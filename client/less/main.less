@@ -1,6 +1,33 @@
 @import "/client/bootstrap/less/bootstrap.lessimport";
-@import "/client/bootstrap/less/responsive.lessimport";;
+@import "/client/bootstrap/less/responsive.lessimport";
 
 body{
   padding-top:30px;
+}
+
+.caravans{
+  .clearfix();
+  margin:30px 0;
+
+  .caravan{
+    float:left;
+    width:32.99%;
+    text-align: center;
+    position: relative;
+
+    .player-1-value,
+    .player-2-value{
+      font-size:30px;
+      line-height:1;
+    }
+
+    .player-1-value{
+      padding-bottom:20px;
+      margin-bottom:20px;
+      border-bottom:4px solid @gray;
+    }
+    .player-2-value{
+
+    }
+  }
 }

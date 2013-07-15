@@ -61,30 +61,8 @@ Meteor.methods({
                     }
                 ],
                 decks: {
-                    'player1': [
-                        {
-                            suit: 'hearts',
-                            value: 2
-                        },
-                        {
-                            suit: 'spades',
-                            value: 5
-                        }
-                    ],
-                    'player2': [
-                        {
-                            suit: 'diamonds',
-                            value: 10
-                        },
-                        {
-                            suit: 'spades',
-                            value: 8
-                        },
-                        {
-                            suit: 'clubs',
-                            value: 2
-                        }
-                    ]
+                    'player1': defaultDeck,
+                    'player2': defaultDeck
                 }
             });
         }else{
