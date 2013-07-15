@@ -61,8 +61,8 @@ Meteor.methods({
                     }
                 ],
                 decks: {
-                    'player1': defaultDeck,
-                    'player2': defaultDeck
+                    'player1': shuffle(defaultDeck),
+                    'player2': shuffle(defaultDeck)
                 }
             });
         }else{

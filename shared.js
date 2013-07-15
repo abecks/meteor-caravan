@@ -226,7 +226,7 @@ defaultDeck = [
  How to randomize a javascript array?
  http://stackoverflow.com/questions/2450954/how-to-randomize-a-javascript-array
  */
-function shuffle(array) {
+shuffle = function(array){
     var currentIndex = array.length
         , temporaryValue
         , randomIndex
