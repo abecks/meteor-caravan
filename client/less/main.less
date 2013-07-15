@@ -115,10 +115,16 @@ body{
 }
 
 @cardSizeRatio: 2.5;
+
+
 .card{
   cursor:pointer;
   .box-shadow(~"0 0 3px rgba(0,0,0,0.5)");
   .border-radius(6px);
+
+  -webkit-transition: -webkit-transform 1s;
+  -moz-transition: -moz-transform 1s;
+  transition: transform 1s;
 
   width: 23vh / @cardSizeRatio;
   height: 32.4vh / @cardSizeRatio;
@@ -235,4 +241,11 @@ body{
   &.active{
     background-color:green;
   }
+}
+
+.player-1-cards .card.slideIn{
+  .translate3d(0, -1000px, 0);
+}
+.player-2-cards .card.slideIn{
+  .translate3d(0, 1000px, 0);
 }

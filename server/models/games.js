@@ -2,7 +2,7 @@
 Games = new Meteor.Collection("games");
 
 // Access rules
-Games.allow({
+Games.deny({
     insert: function(userId, game){
         return true;
     },
@@ -31,6 +31,23 @@ Meteor.publish('games', function () {
 Meteor.publish('match', function(matchId){
     if(this.userId === null) return null;
 
+    // Determine the user's seat
+    var game = Games.findOne({ _id: matchId }),
+        user = Meteor.users.findOne({ _id: this.userId }),
+        fields = {};
+
+    if(typeof game == 'undefined') return false;
+
+    if(game.player1 == user.username){
+        fields['decks.player2'] = 0;
+    }else{
+        fields['decks.player1'] = 0;
+    }
+
     // Return cursor for client
-    return Games.find({ _id: matchId });
+    return Games.find({ _id: matchId },
+        {
+            fields: fields
+        }
+    );
 });

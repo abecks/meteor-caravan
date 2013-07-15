@@ -75,3 +75,82 @@ var joinGame = function(){
         if(matchId) Router.go('match/'+matchId);
     });
 };
+
+
+Meteor.methods({
+
+    /**
+     * Client stub.
+     * Plays the specified card (does no rule checks).
+     * @param match
+     * @param caravan
+     * @param card
+     * @param target
+     */
+   'playCard': function(matchId,caravan,card,target){
+        showMove(null,caravan,card,target);
+        return true;
+   }
+});
+
+Deps.autorun(function(){
+    var gameQuery = Games.find({ _id: Session.get('match')});
+
+    gameQuery.observeChanges({
+        'removed': function(){
+            Router.go('');
+        },
+        'changed': function(id, fields){
+            if(typeof fields.moves != 'undefined' && fields.moves.length > 0){
+                var lastMove = fields.moves[fields.moves.length-1];
+                showMove(lastMove.player,lastMove.caravan,lastMove.card,lastMove.target);
+            }
+        }
+    });
+});
+
+
+showMove = function(player,caravan,card,target){
+    // Add the card to the appropriate caravan
+    var game = getMatch();
+
+    // Dont playback your own moves
+    var seat = getSeat(Meteor.user(), game);
+    if(seat != player){
+        if(player == null) player = seat;
+
+        var $caravan = $('.caravan:eq('+caravan+')'),
+            $card = $(Template['card-'+card.suit+'-'+card.value]());
+
+        // Add animation classes
+        $card.addClass('slideIn');
+
+        var position;
+        if(player == 'player1'){
+            position = '.player-1-cards';
+        }else{
+            position = '.player-2-cards';
+        }
+
+        $card.appendTo($caravan.children(position));
+
+        // Begin animation
+        setTimeout(function(){
+            $card.removeClass('slideIn');
+        }, 50);
+    }
+
+    updateCaravanValues();
+};
+
+var updateCaravanValues = function(){
+    var game = getMatch();
+    $('.caravan').each(function(i){
+        $(this).children('.player-1-value').text(game.caravans[i].player1.value);
+        $(this).children('.player-2-value').text(game.caravans[i].player2.value);
+    });
+};
+
+Meteor.startup(function(){
+    Session.set('cardSelected', false);
+});

@@ -246,4 +246,30 @@ shuffle = function(array){
     }
 
     return array;
-}
+};
+
+/**
+ * Determine if it's the specified players turn.
+ * @param user
+ * @param game
+ */
+isTurn = function(user,game){
+    return (game.player1 == user.username && game.turn == 'player1')
+        || (game.player2 == user.username && game.turn == 'player2');
+};
+
+/**
+ * Determine the specified player's seat in the game. (player1 or player2)
+ * @param user
+ * @param game
+ * @returns {boolean}
+ */
+getSeat = function(user,game){
+    var player = false;
+    if(game.player1 == user.username){
+        player = 'player1';
+    }else if(game.player2 == user.username){
+        player = 'player2';
+    }
+    return player;
+};

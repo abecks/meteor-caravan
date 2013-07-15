@@ -5,6 +5,10 @@ Template.deck.hand = function(cards){
 Template.deck.events = {
     'click .card': function(e){
         e.preventDefault();
+
+        // Make sure it's your turn!
+        if(!isTurn(Meteor.user(),getMatch())) return false;
+
         var $card = $(e.currentTarget);
         if($card.hasClass('active')){
             $card.removeClass('active');

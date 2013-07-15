@@ -9,12 +9,18 @@
         Player 2: {{ match.player2 }}
         <br>
         Created: {{ match.created }}
+        <br>
+        Turn: {{ match.turn }}
+        <br>
+        {{ matchVisibility }}
 
+        {{#constant}}
         <div class="caravans">
         {{#each match.caravans}}
             {{> caravan}}
         {{/each}}
         </div>
+        {{/constant}}
 
         {{{ deck }}}
 
