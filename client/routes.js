@@ -24,20 +24,10 @@ Router = new AppRouter;
 
 /**
  * Push new URL to history and change session action.
- * @param action
+ * @param path
  */
-Router.go = function(action){
-    this.navigate('/'+action);
-
-    if(action == ""){
-        action = 'index';
-    }
-
-    /*
-    Changing the action will change the page_controller template automagically
-    thanks to how awesome Meteor is. (Its actually called a reactive template).
-     */
-    Session.set('action', action);
+Router.go = function(path){
+    this.navigate('/'+path, {trigger: true});
 };
 
 /**

@@ -1,8 +1,20 @@
 <template name="caravan">
 
     <div class="caravan">
+        <div class="player-1-cards caravan-cards">
+            {{#each player1.cards}}
+                {{{ card }}}
+            {{/each}}
+        </div>
         <div class="player-1-value">{{ player1.value }}</div>
         <div class="player-2-value">{{ player2.value }}</div>
+        <div class="player-2-cards caravan-cards">
+            {{#each player2.cards}}
+                {{{ card }}}
+            {{/each}}
+        </div>
+
+        <button class="select-caravan btn btn-primary hide">Place on caravan</button>
     </div>
 
 </template>

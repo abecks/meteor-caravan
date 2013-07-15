@@ -29,5 +29,52 @@ body{
     .player-2-value{
 
     }
+
+    &-cards{
+      .clearfix();
+      position:relative;
+      height:200px;
+
+      .card{
+        position:absolute;
+        bottom:0;
+        left:0;
+        .scale(0.5);
+
+        &:nth-child(1n+1){
+          bottom:20px;
+          left:20px;
+        }
+        &:nth-child(1n+2){
+          bottom:40px;
+          left:15px;
+        }
+        &:nth-child(1n+3){
+          bottom:60px;
+          left:30px;
+        }
+        &:nth-child(1n+4){
+          bottom:80px;
+          left:25px;
+        }
+        &:nth-child(1n+5){
+          bottom:100px;
+          left:20px;
+        }
+        &:nth-child(1n+6){
+          bottom:120px;
+          left:15px;
+        }
+      }
+
+    }
+  }
+}
+
+.card{
+  cursor:pointer;
+
+  &.active{
+    background-color:green;
   }
 }

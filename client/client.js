@@ -61,8 +61,7 @@ var createGame = function(){
     // Ask the server to create a game
     var game = Meteor.call('createGame', function(err, id){
         if(err) console.log(err);
-
-        Router.go('/match/'+id);
+        Router.go('match/'+id);
     });
 };
 
@@ -71,6 +70,8 @@ var createGame = function(){
  */
 var joinGame = function(){
     // Ask the server for a game ID
-    var game = Meteor.call('joinGame');
+    var matchId = Meteor.call('joinGame', function(err, matchId){
+        if(err) console.log(err);
+        if(matchId) Router.go('match/'+matchId);
+    });
 };
-
