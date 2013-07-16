@@ -1,21 +1,23 @@
 <template name="match">
 
+    <div id="match">
     {{#if matchLoaded}}
+        <div class="match-details container">
+            <h1>Match #{{ matchId }}</h1>
 
-        <h1>Match #{{ matchId }}</h1>
-
-        Player 1: {{ match.player1 }}
-        <br>
-        Player 2: {{ match.player2 }}
-        <br>
-        Created: {{ match.created }}
-        <br>
-        Turn: {{ match.turn }}
-        <br>
-        {{ matchVisibility }}
+            Player 1: {{ match.player1 }}
+            <br>
+            Player 2: {{ match.player2 }}
+            <br>
+            Created: {{ match.created }}
+            <br>
+            Turn: {{ match.turn }}
+            <br>
+            {{ matchVisibility }}
+        </div>
 
         {{#constant}}
-        <div class="caravans">
+        <div id="gameboard" class="caravans">
         {{#each match.caravans}}
             {{> caravan}}
         {{/each}}
@@ -27,5 +29,6 @@
     {{else}}
         <h1>Loading...</h1>
     {{/if }}
+    </div>
 
 </template>

@@ -2,7 +2,7 @@
 Deps.autorun(function(){
     Session.set('gamesLoaded', false);
     Meteor.subscribe('match', Session.get('match'), function onComplete(){
-        Session.set('gamesLoaded', true);
+            Session.set('gamesLoaded', true);
     });
 });
 
@@ -53,7 +53,7 @@ Template.match.events = {
                 suit: $card.data('suit'),
                 value: $card.data('value')
             },
-            caravan = $(e.currentTarget).parent().index();
+            caravan = $(e.currentTarget).parents('.caravan').index();
 
         // Place card in caravan
         Meteor.call('playCard', Session.get('match'), caravan, card, null);
@@ -62,23 +62,80 @@ Template.match.events = {
     }
 };
 
+/**
+ * Returns the current game.
+ * @returns {*|Cursor}
+ */
 getMatch = function(){
     return Games.findOne({ _id: Session.get('match') });
 };
 
 
+/**
+ * Runs when the game data is loaded.
+ */
 Deps.autorun(function(){
    if(Session.get('gamesLoaded')){
+       Session.set('seat', undefined); // Clear the seat from any previous games
        var match = getMatch();
        if(typeof match == 'undefined') return false;
 
-       // Seat the player if there is an empty seat
-       if(match.player1 != Meteor.user().username && match.player2 != Meteor.user().username){
-           if(match.player1 == null || match.player2 == null){
-               // Try to join the empty seat
-               Meteor.call('seatPlayer', match._id);
+       // Attempt to seat the player
+       Meteor.call('seatPlayer', match._id, function(err, seat){
+           if(err) console.log(err);
+
+           if(seat){ // Player has been seated
+               Session.set('seat', seat);
+           }else{
+               alert('The match you tried to join is full.');
+               Router.go('');
            }
-       }
+       });
 
    }
 });
+
+/**
+ * Creates clickable controls to place cards.
+ */
+var showCaravanControls = function(){
+    // Determine the player's seat
+    var seat = Session.get('seat');
+
+    $('.caravan').each(function(){
+        // Place basic stack marker in each caravan
+        var $stack = $('<button></button>', {
+            'class': 'card card-marker marker-stack select-caravan'
+        });
+
+        var cardStack;
+        if(seat == 'player1'){
+            cardStack = '.player-1-cards';
+        }else{
+            cardStack = '.player-2-cards';
+        }
+
+        $stack.appendTo($(this).find(cardStack));
+    });
+};
+
+/**
+ * Destroys the caravan controls.
+ */
+var hideCaravanControls = function(){
+    $('.card-marker').remove();
+};
+
+/**
+ * Runs when a card is selected.
+ */
+Deps.autorun(function(){
+   if(Session.get('cardSelected')){
+       showCaravanControls();
+   }else{
+       hideCaravanControls();
+   }
+});
+
+
+

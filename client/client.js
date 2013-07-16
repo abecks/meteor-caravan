@@ -47,10 +47,7 @@ Template.index.events({
     // Delete games
     'click #delete-games': function(e){
         e.preventDefault();
-        Meteor.call('deleteGames', function(err){
-            if(err) console.log(err);
-            alert('All games deleted');
-        });
+        Meteor.call('deleteGames');
     }
 });
 
@@ -93,6 +90,9 @@ Meteor.methods({
    }
 });
 
+/**
+ * When the game's data is updated.
+ */
 Deps.autorun(function(){
     var gameQuery = Games.find({ _id: Session.get('match')});
 
@@ -101,6 +101,7 @@ Deps.autorun(function(){
             Router.go('');
         },
         'changed': function(id, fields){
+            // Register new moves
             if(typeof fields.moves != 'undefined' && fields.moves.length > 0){
                 var lastMove = fields.moves[fields.moves.length-1];
                 showMove(lastMove.player,lastMove.caravan,lastMove.card,lastMove.target);
@@ -109,7 +110,13 @@ Deps.autorun(function(){
     });
 });
 
-
+/**
+ * Show the player's move.
+ * @param player
+ * @param caravan
+ * @param card
+ * @param target
+ */
 showMove = function(player,caravan,card,target){
     // Add the card to the appropriate caravan
     var game = getMatch();
@@ -146,8 +153,8 @@ showMove = function(player,caravan,card,target){
 var updateCaravanValues = function(){
     var game = getMatch();
     $('.caravan').each(function(i){
-        $(this).children('.player-1-value').text(game.caravans[i].player1.value);
-        $(this).children('.player-2-value').text(game.caravans[i].player2.value);
+        $(this).find('.player-1-value').text(game.caravans[i].player1.value);
+        $(this).find('.player-2-value').text(game.caravans[i].player2.value);
     });
 };
 

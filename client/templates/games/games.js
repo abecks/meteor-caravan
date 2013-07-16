@@ -10,10 +10,7 @@ Template.games.events({
     // Delete games
     'click #delete-games': function(e){
         e.preventDefault();
-        Meteor.call('deleteGames', function(err){
-            if(err) console.log(err);
-            alert('All games deleted');
-        });
+        Meteor.call('deleteGames');
     }
 });
 

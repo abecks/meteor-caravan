@@ -51,6 +51,8 @@ Meteor.methods({
                 moves: [],
                 caravans: [
                     {
+                        from: randomCaravanDestination(),
+                        to: randomCaravanDestination(),
                         'player1': {
                             value: 0,
                             cards: []
@@ -62,6 +64,8 @@ Meteor.methods({
                         }
                     },
                     {
+                        from: randomCaravanDestination(),
+                        to: randomCaravanDestination(),
                         'player1': {
                             value: 0,
                             cards: []
@@ -73,6 +77,8 @@ Meteor.methods({
                         }
                     },
                     {
+                        from: randomCaravanDestination(),
+                        to: randomCaravanDestination(),
                         'player1': {
                             value: 0,
                             cards: []
@@ -105,7 +111,8 @@ Meteor.methods({
             user = Meteor.users.findOne({ _id: this.userId });
 
         // Make sure user isn't already seated
-        if(game.player1 == user.username || game.player2 == user.username) return false;
+        if(game.player1 == user.username) return 'player1';
+        if(game.player2 == user.username) return 'player2';
 
         var player;
         if(game.player1 == null || typeof game.player1 == 'undefined'){
@@ -113,13 +120,13 @@ Meteor.methods({
         }else if(game.player2 == null || typeof game.player2 == 'undefined'){
             player = 'player2';
         }else{
-            // todo: eject the player because the match is full (or allow spectators?)
             return false;
         }
 
         var params = { $set: {} };
         params.$set[player] = user.username;
-        return Games.update(game._id, params);
+        Games.update(game._id, params);
+        return player;
     },
 
 
@@ -246,3 +253,12 @@ var cardInHand = function(game,deck,card){
 
     return cardIndex;
 };
+
+var randomCaravanDestination = function(){
+    return shuffle(caravanDestinations.slice(0))[0];
+};
+
+var caravanDestinations = [
+    'Andale', 'Arefu', 'Big Town', 'Citadel', 'Evergreen Mills', 'Girdershade', 'Grayditch', 'Little Lamplight', 'Megaton', 'Paradise Falls', 'Rivet City', 'Tenpenny Tower', // Fallout 3
+    'Boulder City', 'Hoover Dam', 'Goodsprings', 'Jacobstown', 'Nipton', 'Novac', 'Primm' // New Vegas
+];

@@ -5,9 +5,40 @@ body{
   padding-top:60px;
 }
 
+#match{
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:url('/images/04_minimalist_dark_texture.jpg');
+  background-size:cover;
+  color:#fff;
+  overflow:hidden;
+}
+
+.match-details{
+  position: absolute;
+  top: 60px;
+  left: 3vw;
+}
+
+#gameboard{
+
+}
+
+#deck{
+  position:absolute;
+  bottom:-6vh;
+  left:0;
+  width:100%;
+  text-align:center;
+}
+
+@cardSizeRatio: 2;
+
 .caravans{
   .clearfix();
-  margin:30px 0;
 
   .caravan{
     float:left;
@@ -15,60 +46,67 @@ body{
     text-align: center;
     position: relative;
 
+    &-label{
+      font-size:16px;
+      line-height:1;
+      color:rgba(233, 233, 233, 1);
+      padding: 0.5vh 0;
+    }
+
     .player-1-value,
     .player-2-value{
-      font-size:30px;
-      line-height:1;
+      color: rgb(255, 165, 0);
+      text-shadow: 0 0 3px rgb(173, 112, 0);
+      font-weight:bold;
     }
 
-    .player-1-value{
-      padding-bottom:20px;
-      margin-bottom:20px;
-      border-bottom:4px solid @gray;
-    }
-    .player-2-value{
 
-    }
-
+    @stackPadding: 3vh;
     &-cards{
       .clearfix();
       position:relative;
-      height:200px;
+      height: 45vh;
 
       .card{
         position:absolute;
         bottom:0;
-        left:0;
+        margin:2vh 0;
+        margin-left:((23vh / @cardSizeRatio) / 2) * -1;
+
+        -webkit-transition: -webkit-transform 1s;
+        -moz-transition: -moz-transform 1s;
+        transition: transform 1s;
+
 
         &:nth-child(1n+2){
-          bottom:30px
+          bottom:@stackPadding;
         }
         &:nth-child(1n+3){
-          bottom:60px
+          bottom:@stackPadding * 2;
         }
         &:nth-child(1n+4){
-          bottom:90px
+          bottom:@stackPadding * 3;
         }
         &:nth-child(1n+5){
-          bottom:120px
+          bottom:@stackPadding * 4;
         }
         &:nth-child(1n+6){
-          bottom:150px
+          bottom:@stackPadding * 5;
         }
         &:nth-child(1n+7){
-          bottom:180px
+          bottom:@stackPadding * 6;
         }
         &:nth-child(1n+8){
-          bottom:210px
+          bottom:@stackPadding * 7;
         }
         &:nth-child(1n+9){
-          bottom:240px
+          bottom:@stackPadding * 8;
         }
         &:nth-child(1n+10){
-          bottom:270px
+          bottom:@stackPadding * 9;
         }
         &:nth-child(1n+11){
-          bottom:300px
+          bottom:@stackPadding * 10;
         }
       }
 
@@ -114,17 +152,19 @@ body{
   }
 }
 
-@cardSizeRatio: 2.5;
-
 
 .card{
+  color:#000;
   cursor:pointer;
   .box-shadow(~"0 0 3px rgba(0,0,0,0.5)");
   .border-radius(6px);
+  display:inline-block;
+  float:none;
+  margin:0;
 
-  -webkit-transition: -webkit-transform 1s;
-  -moz-transition: -moz-transform 1s;
-  transition: transform 1s;
+  -webkit-transition: -webkit-transform 0.2s;
+  -moz-transition: -moz-transform 0.2s;
+  transition: transform 0.2s;
 
   width: 23vh / @cardSizeRatio;
   height: 32.4vh / @cardSizeRatio;
@@ -239,7 +279,7 @@ body{
 
 
   &.active{
-    background-color:green;
+    .translate3d(0, -20px, 0);
   }
 }
 
@@ -248,4 +288,20 @@ body{
 }
 .player-2-cards .card.slideIn{
   .translate3d(0, 1000px, 0);
+}
+
+
+#deck .card{
+  margin-right:0.5vw;
+
+  &:last-child{
+    margin-right:0;
+  }
+}
+
+.card-marker{
+  background: rgba(255,255,255,0.05);
+  box-shadow: none;
+  -webkit-box-shadow: none;
+  border: 3px dashed rgba(255,255,255,0.7);
 }
