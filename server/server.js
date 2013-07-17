@@ -184,8 +184,11 @@ Meteor.methods({
 
                 if(typeof lastCardInStack !== 'undefined'){
 
-                    var cardValue = card.value;
-                    if(card.value == 'ace') cardValue = '1';
+                    var cardValue;
+                    if(card.value == 'ace')
+                        cardValue = 1;
+                    else
+                        cardValue = card.value;
 
                     // If the card is contrary to the direction and is the same suit, changes the direction, the same number clears the direction
                     if(card.suit == lastCardInStack.suit){
@@ -360,7 +363,7 @@ var calculateStackValue = function(stack){
         var cardCursor = stack[i];
 
         // Root level card value
-        var value = parseInt(cardCursor.value);
+        var value;
         switch(cardCursor.value){
             case 'queen':
             case 'king':
@@ -370,6 +373,8 @@ var calculateStackValue = function(stack){
             case 'ace':
                 value = 1;
                 break;
+            default:
+                value = parseInt(cardCursor.value);
         }
         stackValue += value;
 

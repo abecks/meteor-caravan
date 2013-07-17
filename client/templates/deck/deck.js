@@ -2,6 +2,12 @@ Template.deck.hand = function(cards){
     return cards.slice(0,8);
 };
 
+Template.deck.turn = function(){
+    var match = getMatch();
+    if(match.turn == getSeat(Meteor.user(), match))
+        return 'your-turn';
+};
+
 Template.deck.events = {
     'click .card': function(e){
         e.preventDefault();

@@ -1,5 +1,5 @@
 <template name="deck">
-    <div id="deck" class="deck">
+    <div id="deck" class="deck {{ turn }}">
         {{#each hand cards }}
             {{{ card }}}
         {{/each}}
