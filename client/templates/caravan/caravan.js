@@ -14,3 +14,7 @@ Template.caravan.cardWithModifiers = function(){
         return Template['card-'+this.suit+'-'+this.value]({id: this.id});
     }
 };
+
+Template.caravan.oversold = function(value){
+    if(value > 26) return 'oversold';
+};

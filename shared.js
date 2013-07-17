@@ -291,3 +291,62 @@ findCardInDeck = function(deck,cardId){
     }
     return card;
 };
+
+
+/**
+ * Determine if the specified move is legal.
+ * @param stack
+ * @param card
+ * @param target
+ */
+isLegalMove = function(stack,card,target){
+
+    // Are we trying to place a modifier?
+    if(typeof target != 'undefined' && target != null){
+
+        // Only kings and jacks can be placed as modifiers
+        switch(card.value){
+            case 'king':
+            case 'jack':
+                return true; // can go anywhere!
+            default:
+                return false;
+        }
+    }
+
+
+    // Are we placing a regular card?
+    if(target == null){
+
+        // No kings or jacks
+        switch(card.value){
+            case 'king':
+            case 'jack':
+                return false;
+        }
+
+        var lastCardInStack = stack.cards[stack.cards.length-1];
+        if(typeof lastCardInStack !== 'undefined'){
+            // If the new card isn't the same suit as the last card, it must follow the direction of the stack
+            if(card.suit != lastCardInStack.suit){
+
+                if(card.value == 'ace') card.value = 1;
+
+                console.log('Direction analysis: ', stack.direction, card.value, lastCardInStack.value);
+
+                // Going up or down?
+                if(stack.direction == 'asc'){ // Up
+                    // Card must be of greater value than the last one in the stack, queens allow you to change direction
+                    if(card.value != 'queen' && card.value < lastCardInStack.value) return false;
+                }else if(stack.direction == 'desc'){ // Down
+                    // Card must be of lesser value than the last one in the stack, queens allow you to change direction
+                    if(card.value != 'queen' && card.value > lastCardInStack.value) return false;
+                }
+
+                console.log('Passed');
+            }
+        }
+    }
+
+    return true;
+};

@@ -2,6 +2,11 @@
 
     <div id="match">
     {{#if matchLoaded}}
+
+        {{#if match.winner}}
+            <div class="match-winner">{{ winnerName }} Wins!</div>
+        {{/if}}
+
         <div class="match-details container">
             Player 1: {{ match.player1 }}
             <br>

@@ -53,11 +53,23 @@ body{
       padding: 0.5vh 0;
     }
 
+    .caravan-label-top{
+      padding-top:2vh;
+    }
+    .caravan-label-bottom{
+      padding-bottom:2vh;
+    }
+
     .player-1-value,
     .player-2-value{
       color: rgb(255, 165, 0);
       text-shadow: 0 0 3px rgb(173, 112, 0);
       font-weight:bold;
+
+      &.oversold{
+        color:#FF3300;
+        text-shadow:0 0 3px #AD0000;
+      }
     }
 
 
@@ -66,7 +78,7 @@ body{
     &-cards{
       .clearfix();
       position:relative;
-      height: 45vh;
+      height: 44vh;
 
       .card{
         position:absolute;
@@ -368,10 +380,10 @@ body{
 }
 
 .player-1-cards .card.slideIn{
-  .translate3d(0, -1000px, 0);
+  .translate3d(0, -350%, 0);
 }
 .player-2-cards .card.slideIn{
-  .translate3d(0, 1000px, 0);
+  .translate3d(0, 350%, 0);
 }
 
 
@@ -406,4 +418,15 @@ body{
   height:100%;
   content:'';
   .border-radius(6px);
+}
+
+.match-winner{
+  font-size: 10vh;
+  position: absolute;
+  top: 28vh;
+  width: 100%;
+  text-align: center;
+  z-index: 5000;
+  color: #ffa500;
+  text-shadow: 0 0 6px #ad7000;
 }

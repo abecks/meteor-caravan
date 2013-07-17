@@ -166,6 +166,7 @@ showMove = function(player,caravan,card,target){
 
             }
 
+
         }else{ // Add to caravan normally
             var position;
             if(player == 'player1'){
@@ -182,6 +183,21 @@ showMove = function(player,caravan,card,target){
         // Begin animation
         setTimeout(function(){
             $card.removeClass('slideIn');
+
+
+            if(card.value == 'jack'){
+                var $cards = $card.add($target);
+
+                // After the animation, remove them both
+                setTimeout(function(){
+                    $cards.addClass('slideIn');
+                    setTimeout(function(){
+                        $cards.remove();
+                    }, 1000);
+                }, 1100);
+
+
+            }
         }, 50);
     }
 
@@ -190,9 +206,18 @@ showMove = function(player,caravan,card,target){
 
 var updateCaravanValues = function(){
     var game = getMatch();
+
+    $('.oversold').removeClass('oversold');
+
     $('.caravan').each(function(i){
-        $(this).find('.player-1-value').text(game.caravans[i].player1.value);
-        $(this).find('.player-2-value').text(game.caravans[i].player2.value);
+        var $p1Value = $(this).find('.player-1-value'),
+            $p2Value = $(this).find('.player-2-value');
+
+        $p1Value.text(game.caravans[i].player1.value);
+        if(game.caravans[i].player1.value > 26) $p1Value.addClass('oversold');
+
+        $p2Value.text(game.caravans[i].player2.value);
+        if(game.caravans[i].player2.value > 26) $p2Value.addClass('oversold');
     });
 };
 

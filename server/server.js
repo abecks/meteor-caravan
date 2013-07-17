@@ -46,6 +46,7 @@ Meteor.methods({
                 player1: user.username,
                 player2: null,
                 created: (new Date()).getTime(),
+                winner: false,
                 turn: 'player1',
                 'public': false,
                 moves: [],
@@ -53,39 +54,48 @@ Meteor.methods({
                     {
                         from: randomCaravanDestination(),
                         to: randomCaravanDestination(),
+                        sold: false,
                         'player1': {
                             value: 0,
+                            direction: null,
                             cards: []
                         },
 
                         'player2': {
                             value: 0,
+                            direction: null,
                             cards: []
                         }
                     },
                     {
                         from: randomCaravanDestination(),
                         to: randomCaravanDestination(),
+                        sold: false,
                         'player1': {
                             value: 0,
+                            direction: null,
                             cards: []
                         },
 
                         'player2': {
                             value: 0,
+                            direction: null,
                             cards: []
                         }
                     },
                     {
                         from: randomCaravanDestination(),
                         to: randomCaravanDestination(),
+                        sold: false,
                         'player1': {
                             value: 0,
+                            direction: null,
                             cards: []
                         },
 
                         'player2': {
                             value: 0,
+                            direction: null,
                             cards: []
                         }
                     }
@@ -142,9 +152,6 @@ Meteor.methods({
         var user = Meteor.users.findOne({ _id: this.userId }),
             game = Games.findOne({ _id: match });
 
-        console.log('target', target);
-        console.log('card', card);
-
         // Make sure its the player's turn
         if(!isTurn(user,game)) return false;
 
@@ -152,97 +159,186 @@ Meteor.methods({
         var player = getSeat(user,game),
             deck = game.decks[player];
 
-        console.log(deck, card.id);
-
         // Verify the card is in the player's hand
         if(!isCardInHand(deck,card.id)) return false;
 
-
-        console.log('hit');
         // Find the card in the deck
         card = findCardInDeck(deck,card.id);
         if(!card) return false;
 
+        // Verify the move is legal
+        if(!isLegalMove(game.caravans[caravan][player], card, target)) return false;
 
-        console.log(typeof target);
+        // Stack direction switching for regular cards
+        switch(card.suit){
+            case 'king':
+            case 'jack':
+            case 'queen':
+                break;
+
+            default:
+
+                // Stack direction switching
+                var stack = game.caravans[caravan][player],
+                    lastCardInStack = stack.cards[stack.cards.length-1];
+
+                if(typeof lastCardInStack !== 'undefined'){
+
+                    var cardValue = card.value;
+                    if(card.value == 'ace') cardValue = '1';
+
+                    // If the card is contrary to the direction and is the same suit, changes the direction, the same number clears the direction
+                    if(card.suit == lastCardInStack.suit){
+                        if(stack.direction == 'asc' && cardValue < lastCardInStack.value){
+                            stack.direction = 'desc';
+                        }else if(stack.direction == 'desc' && cardValue > lastCardInStack.value){
+                            stack.direction = 'asc';
+                        }
+                    }
+
+                    if(stack.direction == null){
+
+                        // Set the direction for the first time
+                        if(cardValue > lastCardInStack.value){
+                            stack.direction = 'asc';
+                        }else if(cardValue < lastCardInStack.value){
+                            stack.direction = 'desc';
+                        }
+
+                    }
+                }
+                break;
+        }
 
         var params;
         // Add to the desired caravan
         if(target === null){
-            params = { $push: {} };
-            params.$push['caravans.'+caravan+'.'+player+'.cards'] = { id: card.id, suit: card.suit, value: card.value };
+
+            game.caravans[caravan][player].cards.push({ id: card.id, suit: card.suit, value: card.value });
+
         }else{ // Add as modifier card
 
-            console.log('Add as modifier card:', card, 'target:', target);
 
             // Lookup target card
-            var targetCard = false, stack = game.caravans[caravan][target.stack].cards;
-
-            if(typeof target.index == 'number'){
-
-                // Root card
+            var targetCard = false;
+            if(typeof target.index == 'number'){ // Root card targetted
                 targetCard = game.caravans[caravan][target.stack].cards[target.index];
-                if(!targetCard) return false;
 
-                // Add as modifier to target card
-                if(typeof targetCard.modifiers == 'undefined' || targetCard.modifiers == null){
-                    targetCard.modifiers = [];
-                }
-                targetCard.modifiers.splice(0, 0, card); // Add to front of modifiers array
-
-            }else{
-
-                // Modifier card
+            }else{ // Modifier card targetted
                 var parentCard = game.caravans[caravan][target.stack].cards[target.index[0]];
                 targetCard = parentCard.modifiers[target.index[1]];
-                if(!targetCard) return false;
-                parentCard.modifiers.splice(targetCard.index, 0 , card);
-
             }
 
-            params = { $set: {} };
-            params.$set['caravans.'+caravan+'.'+target.stack+'.cards'] = stack;
+            switch(card.value){
+                case 'king':
+
+                    // Add as modifier to target card
+                    if(typeof target.index == 'number'){ // Root card
+                        if(typeof targetCard.modifiers == 'undefined' || targetCard.modifiers == null){
+                            targetCard.modifiers = [];
+                        }
+                        targetCard.modifiers.splice(0, 0, card); // Add to front of modifiers array
+                    }else{ // Add to modifier chain
+                        if(!targetCard) return false;
+                        parentCard.modifiers.splice(targetCard.index, 0 , card);
+                    }
+
+                    break;
+
+                case 'jack':
+
+                    // Remove card
+                    if(typeof target.index == 'number'){ // Root card
+                        game.caravans[caravan][target.stack].cards.splice(target.index, 1);
+                    }else{ // Modifier card
+                        parentCard.modifiers.splice(target.index[1], 1);
+                    }
+
+                    break;
+
+                case 'queen':
+
+                    // Change direction of stack
+                    var direction = game.caravans[caravan][target.stack].direction;
+                    if(direction == 'asc'){
+                        direction = 'desc';
+                    }else{
+                        direction = 'asc';
+                    }
+
+                    break;
+
+                default:
+                    return false;
+            }
         }
-        console.log(params);
-        Games.update( game._id, params);
 
 
-        // Calculate caravan value
-/*        var faceValue;
-        switch(card.value){
-            case 'jack':
-            case 'queen':
-            case 'king':
-                faceValue = 10;
-                break;
-            case 'ace':
-                faceValue = 1;
-                break;
-            default:
-                faceValue = card.value;
+        // Re-calculate caravan value
+        game.caravans[caravan]['player1'].value = calculateStackValue(game.caravans[caravan]['player1'].cards);
+        game.caravans[caravan]['player2'].value = calculateStackValue(game.caravans[caravan]['player2'].cards);
+
+
+        // Recalculate sold caravans
+        for(var i = 0; i < game.caravans.length; i++){
+            var caravanCursor = game.caravans[i];
+
+            // Does player1 qualify?
+            if(caravanCursor.player1.value >= 21 && caravanCursor.player1.value <= 26){
+
+                // Does player1 beat player2?
+                if(caravanCursor.player1.value > caravanCursor.player2.value || caravanCursor.player2.value > 26){
+                    caravanCursor.sold = 'player1';
+                }
+
+            }
+            // Does player2 qualify?
+            else if(caravanCursor.player2.value >= 21 && caravanCursor.player2.value <= 26){
+
+                // Does player2 beat player1?
+                if(caravanCursor.player2.value > caravanCursor.player1.value || caravanCursor.player1.value > 26){
+                    caravanCursor.sold = 'player2';
+                }
+
+            }
         }
 
-        var caravanValue = parseInt(game.caravans[caravan][player].value) + parseInt(faceValue);
-        params = { $set: {} };
-        params.$set['caravans.'+caravan+'.'+player+'.value'] = caravanValue;
-        Games.update( game._id, params);*/
+        // Is this the winning move?
+        var player1Sold = 0,
+            player2Sold = 0;
 
-        // Remove from the player's deck
+        if(game.caravans[0].sold == 'player1') player1Sold++;
+        if(game.caravans[1].sold == 'player1') player1Sold++;
+        if(game.caravans[2].sold == 'player1') player1Sold++;
+
+        if(game.caravans[0].sold == 'player2') player2Sold++;
+        if(game.caravans[1].sold == 'player2') player2Sold++;
+        if(game.caravans[2].sold == 'player2') player2Sold++;
+
+        if(player1Sold >= 2){
+            game.winner = 'player1';
+        }else if(player2Sold >= 2){
+            game.winner = 'player2';
+        }
+
+        // Remove card from the player's deck
         deck.splice(card.index, 1);
-        params = { $set: {} };
-        params.$set['decks.'+player] = deck;
-        Games.update( game._id, params);
 
         // Add move
-        Games.update( game._id, {$push: { moves: {
+        game.moves.push({
             player: player,
             card: card,
             target: target,
             caravan: caravan
-        }}});
+        });
 
         // Change turn
-        Games.update( game._id, {$set: {turn: (game.turn == 'player1') ? 'player2' : 'player1'}});
+        game.turn = (game.turn == 'player1') ? 'player2' : 'player1';
+
+        // Update match in database
+        params = { $set: {} };
+        params.$set['match'] = game;
+        Games.update( game._id, game);
 
         return true;
     }
@@ -251,6 +347,51 @@ Meteor.methods({
 Meteor.startup(function () {
 
 });
+
+/**
+ * Calculates the value of a caravan stack.
+ * @param stack
+ * @returns {number}
+ */
+var calculateStackValue = function(stack){
+    var stackValue = 0;
+
+    for(var i = 0; i < stack.length; i++){
+        var cardCursor = stack[i];
+
+        // Root level card value
+        var value = parseInt(cardCursor.value);
+        switch(cardCursor.value){
+            case 'queen':
+            case 'king':
+            case 'jack':
+                value = 0;
+                break;
+            case 'ace':
+                value = 1;
+                break;
+        }
+        stackValue += value;
+
+        // Modifiers
+        if(typeof cardCursor.modifiers != 'undefined' && cardCursor.modifiers != null){
+            for(var x = 0; x < cardCursor.modifiers.length; x++){
+
+                var modifierCard = cardCursor.modifiers[x];
+                switch(modifierCard.value){
+                    case 'king':
+                        // Double value of the root card
+                        stackValue += parseInt(cardCursor.value);
+                        break;
+                }
+
+            }
+        }
+
+    }
+
+    return stackValue;
+};
 
 /**
  * Finds a card by id anywhere in a specified caravan stack.

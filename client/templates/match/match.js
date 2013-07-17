@@ -36,6 +36,11 @@ Template.match.match = function(){
     return getMatch();
 };
 
+Template.match.winnerName = function(){
+    var match = getMatch();
+    return match[match.winner];
+};
+
 Template.match.events = {
     'click .select-caravan': function(e){
         e.preventDefault();
@@ -49,29 +54,18 @@ Template.match.events = {
             },
             caravan = $(e.currentTarget).parents('.caravan').index();
 
+        // Verify the move is legal
+        var match = getMatch();
+        if(!isLegalMove(match.caravans[caravan][getSeat(Meteor.user(),match)], card, null)) return false;
+
         // Place card in caravan
         Meteor.call('playCard', Session.get('match'), caravan, card, null);
         Session.set('cardSelected', false);
     },
 
-    'mouseenter #gameboard .card': function(e){
-        if(Session.get('cardSelected')){
-            var $card = $(e.currentTarget);
-            if(!$card.hasClass('card-marker'))
-                $card.addClass('show-marker');
-        }
-    },
-
-    'mouseleave #gameboard .card': function(e){
-        if(Session.get('cardSelected')){
-            var $card = $(e.currentTarget);
-            if($card.hasClass('show-marker'))
-                $card.removeClass('show-marker');
-        }
-    },
-
     'click #gameboard .card': function(e){
         if(Session.get('cardSelected')){
+
             var $card = $('#deck').find('.card.active'),
                 card = {
                     id: $card.data('id'),
@@ -105,6 +99,11 @@ Template.match.events = {
                     index: $target.index()
                 };
             }
+
+            // Verify the move is legal
+            var match = getMatch();
+            if(!isLegalMove(match.caravans[caravanIndex][stack], card, target)) return false;
+
 
             // Play card
             Meteor.call('playCard', Session.get('match'), caravanIndex, card, target);

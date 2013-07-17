@@ -7,13 +7,13 @@
             {{/each}}
         </div>
 
-        <div class="caravan-label">
-            <span class="player-1-value">{{ player1.value }}</span>
+        <div class="caravan-label caravan-label-top">
+            <span class="player-1-value {{ oversold player1.value }}">{{ player1.value }}</span>
             {{ from }}
         </div>
 
-        <div class="caravan-label">
-            <span class="player-2-value">{{ player2.value }}</span>
+        <div class="caravan-label caravan-label-bottom">
+            <span class="player-2-value  {{ oversold player2.value }}">{{ player2.value }}</span>
             {{ to }}
         </div>
 

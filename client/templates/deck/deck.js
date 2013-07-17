@@ -6,6 +6,11 @@ Template.deck.events = {
     'click .card': function(e){
         e.preventDefault();
 
+        var match = getMatch();
+
+        // Match is over
+        if(match.winner !== false) return false;
+
         // Make sure it's your turn!
         if(!isTurn(Meteor.user(),getMatch())) return false;
 
