@@ -22,8 +22,15 @@ Handlebars.registerHelper('isAdmin', function(){
 
 // Render a card
 Handlebars.registerHelper("card", function() {
-    return Template['card-'+this.suit+'-'+this.value]();
+    return Template['card-'+this.suit+'-'+this.value]({id: this.id});
 });
+
+// Does the specified card have modifiers?
+Handlebars.registerHelper("cardHasModifiers", function() {
+    if(typeof this.modifiers == 'undefined') return false;
+    return this.modifiers.length > 0;
+});
+
 
 Meteor.startup(function(){
     Session.set('loading', false);
@@ -127,19 +134,50 @@ showMove = function(player,caravan,card,target){
         if(player == null) player = seat;
 
         var $caravan = $('.caravan:eq('+caravan+')'),
-            $card = $(Template['card-'+card.suit+'-'+card.value]());
+            $card = $(Template['card-'+card.suit+'-'+card.value]({ id: card.id }));
 
         // Add animation classes
         $card.addClass('slideIn');
 
-        var position;
-        if(player == 'player1'){
-            position = '.player-1-cards';
-        }else{
-            position = '.player-2-cards';
+        if(typeof target != 'undefined' && target != null){
+
+            // Find target card
+            var $target = $('.card[data-id='+target.id+']');
+
+            // Is the target a modifier card?
+            if(typeof target.index == 'number'){ // Root card
+
+                // Modifiers are contained as siblings
+                var $modifiers = $target.children('.card-modifiers');
+                if($modifiers.length == 0){
+                    $modifiers = $('<div></div>', {
+                        'class': 'card-modifiers'
+                    }).appendTo($target);
+                }
+
+                // Add to modifiers
+                $card.prependTo($modifiers);
+
+            }else{// Modifier card
+
+                var $modifiers = $target.parents('.card-modifiers');
+                // Add modifier card as a sibling to the others
+                $modifiers.children().eq(target.index[1]).after($card);
+
+            }
+
+        }else{ // Add to caravan normally
+            var position;
+            if(player == 'player1'){
+                position = '.player-1-cards';
+            }else{
+                position = '.player-2-cards';
+            }
+
+            $card.appendTo($caravan.children(position));
         }
 
-        $card.appendTo($caravan.children(position));
+
 
         // Begin animation
         setTimeout(function(){

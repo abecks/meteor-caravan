@@ -61,7 +61,8 @@ body{
     }
 
 
-    @stackPadding: 3vh;
+    @stackPadding: 4vh;
+    @stackPaddingHorizontal: 3vh;
     &-cards{
       .clearfix();
       position:relative;
@@ -70,7 +71,6 @@ body{
       .card{
         position:absolute;
         bottom:0;
-        margin:2vh 0;
         margin-left:((23vh / @cardSizeRatio) / 2) * -1;
 
         -webkit-transition: -webkit-transform 1s;
@@ -108,6 +108,53 @@ body{
         &:nth-child(1n+11){
           bottom:@stackPadding * 10;
         }
+
+
+        .card-modifiers{
+          top: 0;
+          margin: 0;
+          bottom: 0;
+          position:absolute;
+
+          .card{
+            top:0 !important;
+            bottom:auto;
+            left:@stackPaddingHorizontal * -1;
+            margin:0;
+
+            &:nth-child(1n+2){
+              left:@stackPaddingHorizontal * 2 * -1;
+            }
+            &:nth-child(1n+3){
+              left:@stackPaddingHorizontal * 3 * -1;
+            }
+            &:nth-child(1n+4){
+              left:@stackPaddingHorizontal * 4 * -1;
+            }
+            &:nth-child(1n+5){
+              left:@stackPaddingHorizontal * 5 * -1;
+            }
+            &:nth-child(1n+6){
+              left:@stackPaddingHorizontal * 6 * -1;
+            }
+            &:nth-child(1n+7){
+              left:@stackPaddingHorizontal * 7 * -1;
+            }
+            &:nth-child(1n+8){
+              left:@stackPaddingHorizontal * 8 * -1;
+            }
+            &:nth-child(1n+9){
+              left:@stackPaddingHorizontal * 9 * -1;
+            }
+            &:nth-child(1n+10){
+              left:@stackPaddingHorizontal * 10 * -1;
+            }
+            &:nth-child(1n+11){
+              left:@stackPaddingHorizontal * 11 * -1;
+            }
+          }
+        }
+
       }
 
     }
@@ -118,34 +165,71 @@ body{
         top:0;
 
         &:nth-child(1n+2){
-          top:30px
+          top:@stackPadding;
         }
         &:nth-child(1n+3){
-          top:60px
+          top:@stackPadding * 2;
         }
         &:nth-child(1n+4){
-          top:90px
+          top:@stackPadding * 3;
         }
         &:nth-child(1n+5){
-          top:120px
+          top:@stackPadding * 4;
         }
         &:nth-child(1n+6){
-          top:150px
+          top:@stackPadding * 5;
         }
         &:nth-child(1n+7){
-          top:180px
+          top:@stackPadding * 6;
         }
         &:nth-child(1n+8){
-          top:210px
+          top:@stackPadding * 7;
         }
         &:nth-child(1n+9){
-          top:240px
+          top:@stackPadding * 8;
         }
         &:nth-child(1n+10){
-          top:270px
+          top:@stackPadding * 9;
         }
         &:nth-child(1n+11){
-          top:300px
+          top:@stackPadding * 10;
+        }
+
+        .card-modifiers{
+          .card{
+            left:@stackPaddingHorizontal;
+
+            &:nth-child(1n+2){
+              left:@stackPaddingHorizontal * 2;
+            }
+            &:nth-child(1n+3){
+              left:@stackPaddingHorizontal * 3;
+            }
+            &:nth-child(1n+4){
+              left:@stackPaddingHorizontal * 4;
+            }
+            &:nth-child(1n+5){
+              left:@stackPaddingHorizontal * 5;
+            }
+            &:nth-child(1n+6){
+              left:@stackPaddingHorizontal * 6;
+            }
+            &:nth-child(1n+7){
+              left:@stackPaddingHorizontal * 7;
+            }
+            &:nth-child(1n+8){
+              left:@stackPaddingHorizontal * 8;
+            }
+            &:nth-child(1n+9){
+              left:@stackPaddingHorizontal * 9;
+            }
+            &:nth-child(1n+10){
+              left:@stackPaddingHorizontal * 10;
+            }
+            &:nth-child(1n+11){
+              left:@stackPaddingHorizontal * 11;
+            }
+          }
         }
       }
     }
@@ -299,9 +383,27 @@ body{
   }
 }
 
-.card-marker{
-  background: rgba(255,255,255,0.05);
+.card-marker,
+.card.show-marker:after{
+  background: rgba(34, 213, 0, 0.51);
   box-shadow: none;
   -webkit-box-shadow: none;
-  border: 3px dashed rgba(255,255,255,0.7);
+  border:0;
+}
+
+.marker-stack{
+  opacity:0;
+}
+.marker-stack:hover{
+  opacity:1;
+}
+
+.card.show-marker:after{
+  position:absolute;
+  top:0;
+  left:3vh;
+  width:100%;
+  height:100%;
+  content:'';
+  .border-radius(6px);
 }

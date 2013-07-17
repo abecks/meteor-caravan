@@ -1,5 +1,5 @@
 <template name="card-spades-2">
-    <div class="card two" data-suit="spades" data-value="2">
+    <div class="card two" data-suit="spades" data-value="2" data-id="{{ id }}">
         <div class="corner top">
             <span class="number">2</span>
             <span>&#9824;</span>
@@ -12,11 +12,18 @@
             <span class="number">2</span>
             <span>&#9824;</span>
         </div>
+        {{#if cardHasModifiers}}
+            <div class="card-modifiers">
+            {{#each modifiers}}
+                {{{ card }}}
+            {{/each}}
+            </div>
+        {{/if}}
     </div>
 </template>
 
 <template name="card-spades-3">
-    <div class="card three" data-suit="spades" data-value="3">
+    <div class="card three" data-suit="spades" data-value="3" data-id="{{ id }}">
         <div class="corner top">
             <span class="number">3</span>
             <span>&#9824;</span>
@@ -30,11 +37,18 @@
             <span class="number">3</span>
             <span>&#9824;</span>
         </div>
+        {{#if cardHasModifiers}}
+            <div class="card-modifiers">
+            {{#each modifiers}}
+                {{{ card }}}
+            {{/each}}
+            </div>
+        {{/if}}
     </div>
 </template>
 
 <template name="card-spades-4">
-    <div class="card four" data-suit="spades" data-value="4">
+    <div class="card four" data-suit="spades" data-value="4" data-id="{{ id }}">
         <div class="corner top">
             <span class="number">4</span>
             <span>&#9824;</span>
@@ -49,11 +63,18 @@
             <span class="number">4</span>
             <span>&#9824;</span>
         </div>
+        {{#if cardHasModifiers}}
+            <div class="card-modifiers">
+            {{#each modifiers}}
+                {{{ card }}}
+            {{/each}}
+            </div>
+        {{/if}}
     </div>
 </template>
 
 <template name="card-spades-5">
-    <div class="card five" data-suit="spades" data-value="5">
+    <div class="card five" data-suit="spades" data-value="5" data-id="{{ id }}">
         <div class="corner top">
             <span class="number">5</span>
             <span>&#9824;</span>
@@ -69,11 +90,18 @@
             <span class="number">5</span>
             <span>&#9824;</span>
         </div>
+        {{#if cardHasModifiers}}
+            <div class="card-modifiers">
+            {{#each modifiers}}
+                {{{ card }}}
+            {{/each}}
+            </div>
+        {{/if}}
     </div>
 </template>
 
 <template name="card-spades-6">
-    <div class="card six" data-suit="spades" data-value="6">
+    <div class="card six" data-suit="spades" data-value="6" data-id="{{ id }}">
         <div class="corner top">
             <span class="number">6</span>
             <span>&#9824;</span>
@@ -90,11 +118,18 @@
             <span class="number">6</span>
             <span>&#9824;</span>
         </div>
+        {{#if cardHasModifiers}}
+            <div class="card-modifiers">
+            {{#each modifiers}}
+                {{{ card }}}
+            {{/each}}
+            </div>
+        {{/if}}
     </div>
 </template>
 
 <template name="card-spades-7">
-    <div class="card seven" data-suit="spades" data-value="7">
+    <div class="card seven" data-suit="spades" data-value="7" data-id="{{ id }}">
         <div class="corner top">
             <span class="number">7</span>
             <span>&#9824;</span>
@@ -112,11 +147,18 @@
             <span class="number">7</span>
             <span>&#9824;</span>
         </div>
+        {{#if cardHasModifiers}}
+            <div class="card-modifiers">
+            {{#each modifiers}}
+                {{{ card }}}
+            {{/each}}
+            </div>
+        {{/if}}
     </div>
 </template>
 
 <template name="card-spades-8">
-    <div class="card eight" data-suit="spades" data-value="8">
+    <div class="card eight" data-suit="spades" data-value="8" data-id="{{ id }}">
         <div class="corner top">
             <span class="number">8</span>
             <span>&#9824;</span>
@@ -135,11 +177,18 @@
             <span class="number">8</span>
             <span>&#9824;</span>
         </div>
+        {{#if cardHasModifiers}}
+            <div class="card-modifiers">
+            {{#each modifiers}}
+                {{{ card }}}
+            {{/each}}
+            </div>
+        {{/if}}
     </div>
 </template>
 
 <template name="card-spades-9">
-    <div class="card nine" data-suit="spades" data-value="9">
+    <div class="card nine" data-suit="spades" data-value="9" data-id="{{ id }}">
         <div class="corner top">
             <span class="number">9</span>
             <span>&#9824;</span>
@@ -160,11 +209,18 @@
             <span class="number">9</span>
             <span>&#9824;</span>
         </div>
+        {{#if cardHasModifiers}}
+            <div class="card-modifiers">
+            {{#each modifiers}}
+                {{{ card }}}
+            {{/each}}
+            </div>
+        {{/if}}
     </div>
 </template>
 
 <template name="card-spades-10">
-    <div class="card ten" data-suit="spades" data-value="10">
+    <div class="card ten" data-suit="spades" data-value="10" data-id="{{ id }}">
         <div class="corner top">
             <span class="number">10</span>
             <span>&#9824;</span>
@@ -186,11 +242,18 @@
             <span class="number">10</span>
             <span>&#9824;</span>
         </div>
+        {{#if cardHasModifiers}}
+            <div class="card-modifiers">
+            {{#each modifiers}}
+                {{{ card }}}
+            {{/each}}
+            </div>
+        {{/if}}
     </div>
 </template>
 
 <template name="card-spades-jack">
-    <div class="card jack" data-suit="spades" data-value="jack">
+    <div class="card jack" data-suit="spades" data-value="jack" data-id="{{ id }}">
         <div class="corner top">
             <span class="number">J</span>
             <span>&#9824;</span>
@@ -202,11 +265,18 @@
             <span class="number">J</span>
             <span>&#9824;</span>
         </div>
+        {{#if cardHasModifiers}}
+            <div class="card-modifiers">
+            {{#each modifiers}}
+                {{{ card }}}
+            {{/each}}
+            </div>
+        {{/if}}
     </div>
 </template>
 
 <template name="card-spades-queen">
-    <div class="card queen" data-suit="spades" data-value="queen">
+    <div class="card queen" data-suit="spades" data-value="queen" data-id="{{ id }}">
         <div class="corner top">
             <span class="number">Q</span>
             <span>&#9824;</span>
@@ -218,11 +288,18 @@
             <span class="number">Q</span>
             <span>&#9824;</span>
         </div>
+        {{#if cardHasModifiers}}
+            <div class="card-modifiers">
+            {{#each modifiers}}
+                {{{ card }}}
+            {{/each}}
+            </div>
+        {{/if}}
     </div>
 </template>
 
 <template name="card-spades-king">
-    <div class="card king" data-suit="spades" data-value="king">
+    <div class="card king" data-suit="spades" data-value="king" data-id="{{ id }}">
         <div class="corner top">
             <span class="number">K</span>
             <span>&#9824;</span>
@@ -234,11 +311,18 @@
             <span class="number">K</span>
             <span>&#9824;</span>
         </div>
+        {{#if cardHasModifiers}}
+            <div class="card-modifiers">
+            {{#each modifiers}}
+                {{{ card }}}
+            {{/each}}
+            </div>
+        {{/if}}
     </div>
 </template>
 
 <template name="card-spades-ace">
-    <div class="card ace" data-suit="spades" data-value="ace">
+    <div class="card ace" data-suit="spades" data-value="ace" data-id="{{ id }}">
         <div class="corner top">
             <span class="number">A</span>
             <span>&#9824;</span>
@@ -250,5 +334,12 @@
             <span class="number">A</span>
             <span>&#9824;</span>
         </div>
+        {{#if cardHasModifiers}}
+            <div class="card-modifiers">
+            {{#each modifiers}}
+                {{{ card }}}
+            {{/each}}
+            </div>
+        {{/if}}
     </div>
 </template>

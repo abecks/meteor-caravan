@@ -273,3 +273,21 @@ getSeat = function(user,game){
     }
     return player;
 };
+
+/**
+ * Finds the card in the deck.
+ * http://stackoverflow.com/questions/5579678/jquery-how-to-find-an-object-by-attribute-in-an-array
+ * @param deck
+ * @param cardId
+ * @returns {*}
+ */
+findCardInDeck = function(deck,cardId){
+    var card  = false;
+    for(var i = 0; i < deck.length; i++){
+        if(deck[i].id == cardId){
+            card = deck[i];
+            card.index = i;
+        }
+    }
+    return card;
+};

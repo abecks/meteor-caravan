@@ -142,6 +142,9 @@ Meteor.methods({
         var user = Meteor.users.findOne({ _id: this.userId }),
             game = Games.findOne({ _id: match });
 
+        console.log('target', target);
+        console.log('card', card);
+
         // Make sure its the player's turn
         if(!isTurn(user,game)) return false;
 
@@ -149,17 +152,63 @@ Meteor.methods({
         var player = getSeat(user,game),
             deck = game.decks[player];
 
-        // Make sure the card is in the player's current hand
-        var cardIndex = cardInHand(game,deck,card);
-        if(!cardIndex) return false;
+        console.log(deck, card.id);
 
+        // Verify the card is in the player's hand
+        if(!isCardInHand(deck,card.id)) return false;
+
+
+        console.log('hit');
+        // Find the card in the deck
+        card = findCardInDeck(deck,card.id);
+        if(!card) return false;
+
+
+        console.log(typeof target);
+
+        var params;
         // Add to the desired caravan
-        var params = { $push: {} };
-        params.$push['caravans.'+caravan+'.'+player+'.cards'] = { suit: card.suit, value: card.value };
+        if(target === null){
+            params = { $push: {} };
+            params.$push['caravans.'+caravan+'.'+player+'.cards'] = { id: card.id, suit: card.suit, value: card.value };
+        }else{ // Add as modifier card
+
+            console.log('Add as modifier card:', card, 'target:', target);
+
+            // Lookup target card
+            var targetCard = false, stack = game.caravans[caravan][target.stack].cards;
+
+            if(typeof target.index == 'number'){
+
+                // Root card
+                targetCard = game.caravans[caravan][target.stack].cards[target.index];
+                if(!targetCard) return false;
+
+                // Add as modifier to target card
+                if(typeof targetCard.modifiers == 'undefined' || targetCard.modifiers == null){
+                    targetCard.modifiers = [];
+                }
+                targetCard.modifiers.splice(0, 0, card); // Add to front of modifiers array
+
+            }else{
+
+                // Modifier card
+                var parentCard = game.caravans[caravan][target.stack].cards[target.index[0]];
+                targetCard = parentCard.modifiers[target.index[1]];
+                if(!targetCard) return false;
+                parentCard.modifiers.splice(targetCard.index, 0 , card);
+
+            }
+
+            params = { $set: {} };
+            params.$set['caravans.'+caravan+'.'+target.stack+'.cards'] = stack;
+        }
+        console.log(params);
         Games.update( game._id, params);
 
+
         // Calculate caravan value
-        var faceValue;
+/*        var faceValue;
         switch(card.value){
             case 'jack':
             case 'queen':
@@ -176,10 +225,10 @@ Meteor.methods({
         var caravanValue = parseInt(game.caravans[caravan][player].value) + parseInt(faceValue);
         params = { $set: {} };
         params.$set['caravans.'+caravan+'.'+player+'.value'] = caravanValue;
-        Games.update( game._id, params);
+        Games.update( game._id, params);*/
 
         // Remove from the player's deck
-        deck.splice(cardIndex,1);
+        deck.splice(card.index, 1);
         params = { $set: {} };
         params.$set['decks.'+player] = deck;
         Games.update( game._id, params);
@@ -204,15 +253,56 @@ Meteor.startup(function () {
 });
 
 /**
+ * Finds a card by id anywhere in a specified caravan stack.
+ * @param stack
+ * @param target
+ * @returns {boolean}
+ */
+var searchCaravanStack = function(stack, target){
+    var card = false;
+
+    for(var i = 0; i < stack.length; i++){
+        var cardCursor = stack[i];
+
+        if(cardCursor.id == target){ // Root level card
+
+            card = cardCursor;
+            card.index = i;
+
+        }else{ // Search in modifiers if the card has any
+
+            if(typeof cardCursor.modifiers !== 'undefined' && cardCursor.modifiers !== null){
+                for(var x = 0; x < cardCursor.modifiers.length; x++){
+                    var modifierCursor = cardCursor.modifiers[x];
+
+                    if(modifierCursor.id == target){
+                        card = modifierCursor;
+                        card.index = x;
+                        card.modifier = true;
+                        card.parent = cardCursor.id;
+                    }
+
+                }
+            }
+        }
+    }
+
+    console.log('search result:', card);
+
+    return card;
+};
+
+/**
  * Generates a new game deck.
  * @returns {*}
  */
 var generateDeck = function(){
-    var deck = shuffle(defaultDeck);
+    var deck = defaultDeck.slice(0),
+        deck = shuffle(deck);
 
     // Give each card a unique ID in the deck
     for(var i = 0; i < deck.length; i++){
-        deck.id = Meteor.uuid();
+        deck[i].id = Meteor.uuid();
     }
 
     return deck;
@@ -230,28 +320,25 @@ var isAdmin = function(userId){
 
 /**
  * Verifies the card is in the player's hand.
- * If the card is present, turns the card's index in the deck.
- * If the card is not present, returns false.
  * @param game
  * @param deck
  * @param card
  * @returns {*}
  */
-var cardInHand = function(game,deck,card){
+var isCardInHand = function(deck,card){
     // Hand is the first eight cards
     var hand = deck.slice(0);
     hand = hand.splice(0,8);
 
     // Make sure the desired playing card is in the hand
-    var cardIndex;
+    var present = false;
     for(var i = 0; i < hand.length; i++){
-        if(hand[i].suit == card.suit && hand[i].value == card.value){
-            cardIndex = i;
+        if(hand[i].id == card){
+            present = true;
             break;
         }
     }
-
-    return cardIndex;
+    return present;
 };
 
 var randomCaravanDestination = function(){

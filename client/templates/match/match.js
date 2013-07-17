@@ -23,20 +23,13 @@ Template.match.matchVisibility = function(){
 };
 
 Template.match.deck = function(){
-    // Determine the player's deck
-    var deck, match = getMatch();
-    if(typeof match == 'undefined') return;
-    if(match.player1 == Meteor.user().username){
-        deck = match.decks.player1;
-    }else if(match.player2 == Meteor.user().username){
-        deck = match.decks.player2;
-    }else{
-        return;
+    var match = getMatch(),
+        seat = getSeat(Meteor.user(), match);
+    if(seat){
+        return Template['deck']({
+            cards: match.decks[seat]
+        });
     }
-
-    return Template['deck']({
-        cards: deck
-    });
 };
 
 Template.match.match = function(){
@@ -50,6 +43,7 @@ Template.match.events = {
         // Find the active card
         var $card = $('#deck').find('.card.active'),
             card = {
+                id: $card.data('id'),
                 suit: $card.data('suit'),
                 value: $card.data('value')
             },
@@ -57,8 +51,66 @@ Template.match.events = {
 
         // Place card in caravan
         Meteor.call('playCard', Session.get('match'), caravan, card, null);
-
         Session.set('cardSelected', false);
+    },
+
+    'mouseenter #gameboard .card': function(e){
+        if(Session.get('cardSelected')){
+            var $card = $(e.currentTarget);
+            if(!$card.hasClass('card-marker'))
+                $card.addClass('show-marker');
+        }
+    },
+
+    'mouseleave #gameboard .card': function(e){
+        if(Session.get('cardSelected')){
+            var $card = $(e.currentTarget);
+            if($card.hasClass('show-marker'))
+                $card.removeClass('show-marker');
+        }
+    },
+
+    'click #gameboard .card': function(e){
+        if(Session.get('cardSelected')){
+            var $card = $('#deck').find('.card.active'),
+                card = {
+                    id: $card.data('id'),
+                    suit: $card.data('suit'),
+                    value: $card.data('value')
+                },
+                $target = $(e.currentTarget),
+                caravanIndex = $target.parents('.caravan').index();
+
+            // Determine stack
+            var $stack = $target.parents('.caravan-cards'),
+                stack;
+            if($stack.hasClass('player-1-cards')){
+                stack = 'player1'
+            }else{
+                stack = 'player2';
+            }
+
+            // Get index coordinates of target
+            var target, $modifiers = $target.parents('.card-modifiers');
+            if($modifiers.length > 0){ // Is a modifier card
+                target = {
+                    id: $target.data('id'),
+                    stack: stack,
+                    index: [ $target.parents('.card').index(), $target.index() ]
+                };
+            }else{ // Root of stack
+                target = {
+                    id: $target.data('id'),
+                    stack: stack,
+                    index: $target.index()
+                };
+            }
+
+            // Play card
+            Meteor.call('playCard', Session.get('match'), caravanIndex, card, target);
+            Session.set('cardSelected', false);
+            $('.show-marker').removeClass('show-marker');
+        }
     }
 };
 
