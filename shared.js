@@ -54,7 +54,7 @@ defaultDeck = [
     },
     {
         suit: 'hearts',
-        value: 'ace'
+        value: '1'
     },
 
     // Spades
@@ -108,7 +108,7 @@ defaultDeck = [
     },
     {
         suit: 'spades',
-        value: 'ace'
+        value: '1'
     },
 
     // Clubs
@@ -162,7 +162,7 @@ defaultDeck = [
     },
     {
         suit: 'clubs',
-        value: 'ace'
+        value: '1'
     },
 
     // Diamonds
@@ -216,7 +216,7 @@ defaultDeck = [
     },
     {
         suit: 'diamonds',
-        value: 'ace'
+        value: '1'
     }
 ];
 
@@ -301,10 +301,10 @@ findCardInDeck = function(deck,cardId){
  */
 isLegalMove = function(stack,card,target){
 
-    // Are we trying to place a modifier?
+    // Are we trying to pl1 a modifier?
     if(typeof target != 'undefined' && target != null){
 
-        // Only kings and jacks can be placed as modifiers
+        // Only kings and jacks can be pl1d as modifiers
         switch(card.value){
             case 'king':
             case 'jack':
@@ -330,7 +330,7 @@ isLegalMove = function(stack,card,target){
             // If the new card isn't the same suit as the last card, it must follow the direction of the stack
             if(card.suit != lastCardInStack.suit){
 
-                if(card.value == 'ace') card.value = 1;
+                if(card.value == '1') card.value = 1;
 
                 console.log('Direction analysis: ', stack.direction, card.value, lastCardInStack.value);
 

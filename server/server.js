@@ -184,17 +184,11 @@ Meteor.methods({
 
                 if(typeof lastCardInStack !== 'undefined'){
 
-                    var cardValue;
-                    if(card.value == 'ace')
-                        cardValue = 1;
-                    else
-                        cardValue = card.value;
-
                     // If the card is contrary to the direction and is the same suit, changes the direction, the same number clears the direction
                     if(card.suit == lastCardInStack.suit){
-                        if(stack.direction == 'asc' && cardValue < lastCardInStack.value){
+                        if(stack.direction == 'asc' && card.value < lastCardInStack.value){
                             stack.direction = 'desc';
-                        }else if(stack.direction == 'desc' && cardValue > lastCardInStack.value){
+                        }else if(stack.direction == 'desc' && card.value > lastCardInStack.value){
                             stack.direction = 'asc';
                         }
                     }
@@ -202,9 +196,9 @@ Meteor.methods({
                     if(stack.direction == null){
 
                         // Set the direction for the first time
-                        if(cardValue > lastCardInStack.value){
+                        if(card.value > lastCardInStack.value){
                             stack.direction = 'asc';
-                        }else if(cardValue < lastCardInStack.value){
+                        }else if(card.value < lastCardInStack.value){
                             stack.direction = 'desc';
                         }
 
@@ -369,9 +363,6 @@ var calculateStackValue = function(stack){
             case 'king':
             case 'jack':
                 value = 0;
-                break;
-            case 'ace':
-                value = 1;
                 break;
             default:
                 value = parseInt(cardCursor.value);
