@@ -334,6 +334,9 @@ isLegalMove = function(stack,card,target){
 
                 console.log('Direction analysis: ', stack.direction, card.value, lastCardInStack.value);
 
+                // Card can't be of equal value if is a different suit
+                if(card.value == lastCardInStack.value) return false;
+
                 // Going up or down?
                 if(stack.direction == 'asc'){ // Up
                     // Card must be of greater value than the last one in the stack, queens allow you to change direction
