@@ -280,30 +280,37 @@ Meteor.methods({
         for(var i = 0; i < game.caravans.length; i++){
             var caravanCursor = game.caravans[i];
 
-            // Does player1 qualify?
-            if(caravanCursor.player1.value >= 21 && caravanCursor.player1.value <= 26){
+            // Recalculate sold flag
+            caravanCursor.sold = false;
 
-                // Does player1 beat player2?
-                if(caravanCursor.player1.value > caravanCursor.player2.value || caravanCursor.player2.value > 26){
-                    caravanCursor.sold = 'player1';
-                }
-
+            // Player1 wins
+            if(
+                // Score qualifies
+                (caravanCursor.player1.value >= 21 && caravanCursor.player1.value <= 26)
+                &&
+                // Beats player 2 or player 2 is over 26
+                (caravanCursor.player1.value > caravanCursor.player2.value || caravanCursor.player2.value > 26)
+            ){
+                caravanCursor.sold = 'player1';
             }
-            // Does player2 qualify?
-            else if(caravanCursor.player2.value >= 21 && caravanCursor.player2.value <= 26){
-
-                // Does player2 beat player1?
-                if(caravanCursor.player2.value > caravanCursor.player1.value || caravanCursor.player1.value > 26){
-                    caravanCursor.sold = 'player2';
-                }
+            // Player2 wins
+            else if(
+                // Score qualifies
+                (caravanCursor.player2.value >= 21 && caravanCursor.player2.value <= 26)
+                    &&
+                    // Beats player 1 or player 1 is over 26
+                    (caravanCursor.player2.value > caravanCursor.player1.value || caravanCursor.player1.value > 26)
+            ){
+                caravanCursor.sold = 'player2';
             }
-            // Caravan is not sold
-            else{
-                caravanCursor.sold = false;
+            // Its a tie
+            else if(caravanCursor.player1.value == caravanCursor.player2.value){
+                caravanCursor.sold = true;
             }
         }
 
 
+        // if its a tie it doesnt think its sold
 
         // If all caravans are sold, we might have a winner
         if(game.caravans[0].sold && game.caravans[1].sold && game.caravans[2].sold){
@@ -442,8 +449,8 @@ var searchCaravanStack = function(stack, target){
  * @returns {*}
  */
 var generateDeck = function(){
-    var deck = defaultDeck.slice(0),
-        deck = shuffle(deck);
+    var deck = JSON.parse(JSON.stringify(defaultDeck));
+    deck = shuffle(deck);
 
     // Give each card a unique ID in the deck
     for(var i = 0; i < deck.length; i++){
