@@ -296,26 +296,34 @@ Meteor.methods({
                 if(caravanCursor.player2.value > caravanCursor.player1.value || caravanCursor.player1.value > 26){
                     caravanCursor.sold = 'player2';
                 }
-
+            }
+            // Caravan is not sold
+            else{
+                caravanCursor.sold = false;
             }
         }
 
-        // Is this the winning move?
-        var player1Sold = 0,
-            player2Sold = 0;
 
-        if(game.caravans[0].sold == 'player1') player1Sold++;
-        if(game.caravans[1].sold == 'player1') player1Sold++;
-        if(game.caravans[2].sold == 'player1') player1Sold++;
 
-        if(game.caravans[0].sold == 'player2') player2Sold++;
-        if(game.caravans[1].sold == 'player2') player2Sold++;
-        if(game.caravans[2].sold == 'player2') player2Sold++;
+        // If all caravans are sold, we might have a winner
+        if(game.caravans[0].sold && game.caravans[1].sold && game.caravans[2].sold){
+            var player1Sold = 0,
+                player2Sold = 0;
 
-        if(player1Sold >= 2){
-            game.winner = 'player1';
-        }else if(player2Sold >= 2){
-            game.winner = 'player2';
+            // Has either player sold at least two of the caravans?
+            if(game.caravans[0].sold == 'player1') player1Sold++;
+            if(game.caravans[1].sold == 'player1') player1Sold++;
+            if(game.caravans[2].sold == 'player1') player1Sold++;
+
+            if(game.caravans[0].sold == 'player2') player2Sold++;
+            if(game.caravans[1].sold == 'player2') player2Sold++;
+            if(game.caravans[2].sold == 'player2') player2Sold++;
+
+            if(player1Sold >= 2){
+                game.winner = 'player1';
+            }else if(player2Sold >= 2){
+                game.winner = 'player2';
+            }
         }
 
         // Remove card from the player's deck
