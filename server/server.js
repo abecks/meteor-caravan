@@ -24,13 +24,11 @@ Meteor.methods({
      * @returns {*}
      */
     'joinGame': function(){
-        // todo: only search public games
-        var game = Games.findOne({ $or: [ {player1: null}, {player2: null}] });
+        var game = Games.findOne({ $or: [ {player1: null}, {player2: null}], 'public': true });
         if(typeof game != 'undefined'){
             return game._id;
         }else{
-            // todo: create a public game for the user
-            return false;
+            return createGame(this.userId, true);
         }
     },
 
@@ -39,75 +37,7 @@ Meteor.methods({
      * @returns {*}
      */
     'createGame': function(){
-        // Get username
-        var user = Meteor.users.findOne({ _id: this.userId });
-        if(typeof user != 'undefined'){
-            return Games.insert({
-                player1: user.username,
-                player2: null,
-                created: (new Date()).getTime(),
-                winner: false,
-                turn: 'player1',
-                'public': false,
-                moves: [],
-                caravans: [
-                    {
-                        from: randomCaravanDestination(),
-                        to: randomCaravanDestination(),
-                        sold: false,
-                        'player1': {
-                            value: 0,
-                            direction: null,
-                            cards: []
-                        },
-
-                        'player2': {
-                            value: 0,
-                            direction: null,
-                            cards: []
-                        }
-                    },
-                    {
-                        from: randomCaravanDestination(),
-                        to: randomCaravanDestination(),
-                        sold: false,
-                        'player1': {
-                            value: 0,
-                            direction: null,
-                            cards: []
-                        },
-
-                        'player2': {
-                            value: 0,
-                            direction: null,
-                            cards: []
-                        }
-                    },
-                    {
-                        from: randomCaravanDestination(),
-                        to: randomCaravanDestination(),
-                        sold: false,
-                        'player1': {
-                            value: 0,
-                            direction: null,
-                            cards: []
-                        },
-
-                        'player2': {
-                            value: 0,
-                            direction: null,
-                            cards: []
-                        }
-                    }
-                ],
-                decks: {
-                    'player1': generateDeck(),
-                    'player2': generateDeck()
-                }
-            });
-        }else{
-            return null;
-        }
+        return createGame(this.userId, false);
     },
 
     /**
@@ -402,6 +332,81 @@ var calculateStackValue = function(stack){
     }
 
     return stackValue;
+};
+
+/**
+ * Creates a game for the user.
+ * @param user
+ * @param public - Whether or not the game is public.
+ * @returns {*|null}
+ */
+var createGame = function(userId, public){
+    var user = Meteor.users.findOne({ _id: userId });
+    if(typeof user == 'undefined') return false;
+
+    return Games.insert({
+        player1: user.username,
+        player2: null,
+        created: (new Date()).getTime(),
+        winner: false,
+        turn: 'player1',
+        'public': public,
+        moves: [],
+        caravans: [
+            {
+                from: randomCaravanDestination(),
+                to: randomCaravanDestination(),
+                sold: false,
+                'player1': {
+                    value: 0,
+                    direction: null,
+                    cards: []
+                },
+
+                'player2': {
+                    value: 0,
+                    direction: null,
+                    cards: []
+                }
+            },
+            {
+                from: randomCaravanDestination(),
+                to: randomCaravanDestination(),
+                sold: false,
+                'player1': {
+                    value: 0,
+                    direction: null,
+                    cards: []
+                },
+
+                'player2': {
+                    value: 0,
+                    direction: null,
+                    cards: []
+                }
+            },
+            {
+                from: randomCaravanDestination(),
+                to: randomCaravanDestination(),
+                sold: false,
+                'player1': {
+                    value: 0,
+                    direction: null,
+                    cards: []
+                },
+
+                'player2': {
+                    value: 0,
+                    direction: null,
+                    cards: []
+                }
+            }
+        ],
+        decks: {
+            'player1': generateDeck(),
+            'player2': generateDeck()
+        }
+    });
 };
 
 /**

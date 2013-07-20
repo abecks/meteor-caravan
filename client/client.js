@@ -73,6 +73,7 @@ var createGame = function(){
  * Joins an existing game.
  */
 var joinGame = function(){
+    console.log('hit');
     // Ask the server for a game ID
     var matchId = Meteor.call('joinGame', function(err, matchId){
         if(err) console.log(err);
