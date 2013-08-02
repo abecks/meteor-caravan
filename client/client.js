@@ -31,6 +31,11 @@ Handlebars.registerHelper("cardHasModifiers", function() {
     return this.modifiers.length > 0;
 });
 
+// Global access to the match object
+Handlebars.registerHelper("match", function(){
+    return getMatch();
+});
+
 
 Meteor.startup(function(){
     Session.set('loading', false);
@@ -73,7 +78,6 @@ var createGame = function(){
  * Joins an existing game.
  */
 var joinGame = function(){
-    console.log('hit');
     // Ask the server for a game ID
     var matchId = Meteor.call('joinGame', function(err, matchId){
         if(err) console.log(err);

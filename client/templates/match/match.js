@@ -32,10 +32,6 @@ Template.match.deck = function(){
     }
 };
 
-Template.match.match = function(){
-    return getMatch();
-};
-
 Template.match.winnerName = function(){
     var match = getMatch();
     return match[match.winner];

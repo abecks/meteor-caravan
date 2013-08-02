@@ -1,6 +1,4 @@
 Template.caravan.cardWithModifiers = function(){
-    console.log(this);
-
     // Render modifiers if there are any
     if(typeof this.modifiers != 'undefined' && this.modifiers != null){
         var $modifiers = $('<div></div>', {
