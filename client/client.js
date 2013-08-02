@@ -175,9 +175,9 @@ showMove = function(player,caravan,card,target){
         }else{ // Add to caravan normally
             var position;
             if(player == 'player1'){
-                position = '.player-1-cards';
+                position = '.player1-cards';
             }else{
-                position = '.player-2-cards';
+                position = '.player2-cards';
             }
 
             $card.appendTo($caravan.children(position));

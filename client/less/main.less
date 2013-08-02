@@ -2,7 +2,8 @@
 @import "/client/bootstrap/less/responsive.lessimport";
 
 body{
-  padding-top:60px;
+  padding-top:80px;
+  background-color:#ede3da;
 }
 
 #match{
@@ -200,7 +201,7 @@ body{
 
     }
 
-    .player-2-cards{
+    .caravan-bottom-cards{
       .card{
         bottom:auto;
         top:0;
@@ -408,10 +409,10 @@ body{
   }
 }
 
-.player-1-cards .card.slideIn{
+.caravan-top-cards .card.slideIn{
   .translate3d(0, -350%, 0);
 }
-.player-2-cards .card.slideIn{
+.caravan-bottom-cards .card.slideIn{
   .translate3d(0, 350%, 0);
 }
 
@@ -458,4 +459,17 @@ body{
   z-index: 5000;
   color: #ffa500;
   text-shadow: 0 0 6px #ad7000;
+}
+
+.rte{
+  max-width:40em;
+  font-size:18px;
+  line-height:1.5em;
+  margin:0 auto 30px auto;
+
+  ul{
+    li{
+      line-height:1.5em;
+    }
+  }
 }

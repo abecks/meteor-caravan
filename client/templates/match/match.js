@@ -74,7 +74,7 @@ Template.match.events = {
             // Determine stack
             var $stack = $target.parents('.caravan-cards'),
                 stack;
-            if($stack.hasClass('player-1-cards')){
+            if($stack.hasClass('player1-cards')){
                 stack = 'player1'
             }else{
                 stack = 'player2';
@@ -157,9 +157,9 @@ var showCaravanControls = function(){
 
         var cardStack;
         if(seat == 'player1'){
-            cardStack = '.player-1-cards';
+            cardStack = '.player1-cards';
         }else{
-            cardStack = '.player-2-cards';
+            cardStack = '.player2-cards';
         }
 
         $stack.appendTo($(this).find(cardStack));
