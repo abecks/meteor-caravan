@@ -2,5 +2,5 @@
 Messages = new Meteor.Collection("messages");
 
 Template.chat.messages = function(){
-    return Messages.find();
+    return Messages.find({ game: Session.get('match') });
 };
