@@ -15,8 +15,36 @@ Template.caravan.cardWithModifiers = function(){
     }
 };
 
-Template.caravan.oversold = function(value){
+
+Template.caravan.oversold = function(position, caravan){
+    var match = getMatch(),
+        value;
+
+    if(position == 'top'){
+
+        var opponent = getOpponent();
+        value = caravan[opponent];
+
+    }else{
+
+        var seat = getSeat(Meteor.user(), match);
+        value = caravan[seat];
+
+    }
+
     if(value > 26) return 'oversold';
+};
+
+Template.caravan.topValue = function(){
+    var opponent = getOpponent();
+    return this[opponent].value;
+};
+
+Template.caravan.bottomValue = function(){
+    var match = getMatch(),
+        seat = getSeat(Meteor.user(), match);
+
+    return this[seat].value;
 };
 
 Template.caravan.topCards = function(caravan){
@@ -39,25 +67,25 @@ Template.caravan.bottomCards = function(caravan){
         return caravan.player2.cards;
 };
 
-Template.caravan.playerCardClass = function(position){
+Template.caravan.playerClass = function(position,slug){
     var match = getMatch();
 
     if(position == 'top'){
 
         // Top should always be the opponent
         if(match.player1 == Meteor.user().username){
-            return 'player2-cards';
+            return 'player2-'+slug;
         }else{
-            return 'player1-cards';
+            return 'player1-'+slug;
         }
 
     }else{
 
         // Bottom should always be the player
         if(match.player1 == Meteor.user().username){
-            return 'player1-cards';
+            return 'player1-'+slug;
         }else{
-            return 'player2-cards';
+            return 'player2-'+slug;
         }
 
     }

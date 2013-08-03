@@ -266,8 +266,9 @@ Meteor.methods({
         // Remove card from the player's deck
         deck.splice(card.index, 1);
 
-        // Add move
-        game.moves.push({
+        // Add move to collection
+        Moves.insert({
+            game: game._id,
             player: player,
             card: card,
             target: target,
@@ -379,7 +380,6 @@ var createGame = function(userId, visibility){
         winner: false,
         turn: 'player1',
         'public': visibility,
-        moves: [],
         chat: [],
         caravans: [
             {

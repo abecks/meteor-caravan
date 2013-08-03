@@ -106,18 +106,41 @@ Meteor.methods({
  * When the game's data is updated.
  */
 Deps.autorun(function(){
-    var gameQuery = Games.find({ _id: Session.get('match')});
+    var gamesCollection = Games.find({ _id: Session.get('match')});
 
-    gameQuery.observeChanges({
+    gamesCollection.observeChanges({
         'removed': function(){
             Router.go('');
         },
-        'changed': function(id, fields){
-            // Register new moves
-            if(typeof fields.moves != 'undefined' && fields.moves.length > 0){
-                var lastMove = fields.moves[fields.moves.length-1];
-                showMove(lastMove.player,lastMove.caravan,lastMove.card,lastMove.target);
-            }
+        'changed': function(){
+            updateCaravanValues();
+        }
+    });
+});
+
+/**
+ * Determine the seat of the player's opponent.
+ * @returns {string}
+ */
+getOpponent = function(){
+    var match = getMatch();
+    return (match.player1 == Meteor.user().username) ? 'player2' : 'player1';
+};
+
+/**
+ * When the moves are updated.
+ */
+Deps.autorun(function(){
+    var movesCollection = Moves.find();
+    movesCollection.observe({
+        'added': function(move){
+            if(typeof move == 'undefined') return false;
+
+            // Dont show the move if the card is already rendered
+            var card = $('.card[data-id='+move.card.id+']');
+            if(card.length > 0) return false;
+
+            showMove(move.player,move.caravan,move.card,move.target);
         }
     });
 });
@@ -215,8 +238,8 @@ var updateCaravanValues = function(){
     $('.oversold').removeClass('oversold');
 
     $('.caravan').each(function(i){
-        var $p1Value = $(this).find('.player-1-value'),
-            $p2Value = $(this).find('.player-2-value');
+        var $p1Value = $(this).find('.player1-value'),
+            $p2Value = $(this).find('.player2-value');
 
         $p1Value.text(game.caravans[i].player1.value);
         if(game.caravans[i].player1.value > 26) $p1Value.addClass('oversold');

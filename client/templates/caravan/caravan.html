@@ -2,7 +2,7 @@
 
     <div class="caravan">
 
-        <div class="caravan-top-cards caravan-cards {{ playerCardClass 'top' }}">
+        <div class="caravan-top-cards caravan-cards {{ playerClass 'top' 'cards' }}">
             {{#each topCards this}}
                 {{{ cardWithModifiers }}}
             {{/each}}
@@ -11,17 +11,17 @@
 
 
         <div class="caravan-label caravan-label-top">
-            <span class="player-1-value {{ oversold player1.value }}">{{ player1.value }}</span>
+            <span class="{{ playerClass 'top' 'value'}} {{ oversold 'top' this }}">{{ topValue }}</span>
             {{ from }}
         </div>
 
         <div class="caravan-label caravan-label-bottom">
-            <span class="player-2-value  {{ oversold player2.value }}">{{ player2.value }}</span>
+            <span class="{{ playerClass 'bottom' 'value'}}  {{ oversold 'bottom' this }}">{{ bottomValue }}</span>
             {{ to }}
         </div>
 
 
-        <div class="caravan-bottom-cards caravan-cards {{ playerCardClass 'bottom' }}">
+        <div class="caravan-bottom-cards caravan-cards {{ playerClass 'bottom' 'cards' }}">
             {{#each bottomCards this}}
                 {{{ cardWithModifiers }}}
             {{/each}}

@@ -1,8 +1,21 @@
-// Create collection
+// Create collections
 Games = new Meteor.Collection("games");
+Moves = new Meteor.Collection("moves");
 
-// Access rules
+// Access rules - deny all client modifications
 Games.deny({
+    insert: function(userId, game){
+        return true;
+    },
+    update: function(userId, game){
+        return true;
+    },
+    remove: function(userId, game){
+        return true;
+    }
+});
+
+Moves.deny({
     insert: function(userId, game){
         return true;
     },
@@ -46,4 +59,17 @@ Meteor.publish('match', function(matchId){
 
     // Return cursor for client
     return Games.find({ _id: matchId });
+});
+
+// Publish the moves for the user's match
+Meteor.publish('moves', function(gameId){
+    if(this.userId === null) return null;
+
+    var user = Meteor.users.findOne({ _id : this.userId });
+    if(typeof user == 'undefined') return false;
+
+    var game = Games.find({ _id: gameId, $or: [ { player1: user.username }, { player2: user.username } ] });
+    if(typeof game == 'undefined') return false;
+
+    return Moves.find({ game: gameId });
 });

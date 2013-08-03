@@ -1,3 +1,6 @@
+// Create minimongo objects
+Moves = new Meteor.Collection("moves");
+
 // Subscribe to collection on startup.
 Deps.autorun(function(){
     Session.set('gamesLoaded', false);
@@ -5,10 +8,13 @@ Deps.autorun(function(){
     // Subscribe to the match
     Meteor.subscribe('match', Session.get('match'), function onComplete(){
             Session.set('gamesLoaded', true);
-    });
 
-    // Subscribe to the chat
-    Meteor.subscribe('messages', Session.get('match'));
+        // Subscribe to the chat
+        Meteor.subscribe('messages', Session.get('match'));
+
+        // Subscribe to the game moves
+        Meteor.subscribe('moves', Session.get('match'));
+    });
 });
 
 Template.match.matchId = function(){
