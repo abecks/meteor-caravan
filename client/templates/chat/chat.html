@@ -1,0 +1,15 @@
+<template name="chat">
+    <div id="chat">
+        <ul id="chat-messages">
+            {{#each messages}}
+            <li class="chat-message">
+                <strong>{{ author }}:</strong>
+                <span class="message-content">{{ content }}</span>
+            </li>
+            {{/each}}
+        </ul>
+    </div>
+
+
+    <textarea id="chat-input" type="text" placeholder="Type a message..."></textarea>
+</template>

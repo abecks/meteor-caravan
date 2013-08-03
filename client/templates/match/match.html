@@ -7,15 +7,7 @@
             <div class="match-winner">{{ winnerName }} Wins!</div>
         {{/if}}
 
-        <div class="match-details container">
-            Player 1: {{ match.player1 }}
-            <br>
-            Player 2: {{ match.player2 }}
-            <br>
-            Turn: {{ match.turn }}
-            <br>
-            {{ matchVisibility }}
-        </div>
+
 
         {{#constant}}
         <div id="gameboard" class="caravans">
@@ -30,6 +22,27 @@
     {{else}}
         <h1>Loading...</h1>
     {{/if }}
+    </div>
+
+    <div id="sidebar">
+
+        {{#if matchLoaded}}
+        <div class="match-details">
+
+            <div class="match-details-players">
+                {{ match.player1 }}
+                <div class="versus">vs</div>
+                {{ match.player2 }}
+            </div>
+
+            Turn: {{ match.turn }}
+            <br>
+            {{ matchVisibility }}
+        </div>
+        {{/if }}
+
+        {{> chat}}
+
     </div>
 
 </template>

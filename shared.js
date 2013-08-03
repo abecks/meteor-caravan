@@ -353,3 +353,13 @@ isLegalMove = function(stack,card,target){
 
     return true;
 };
+
+
+/**
+ * From http://css-tricks.com/snippets/javascript/htmlentities-for-javascript/
+ * @param str
+ * @returns {string}
+ */
+htmlEntities = function(str) {
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+};

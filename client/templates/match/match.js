@@ -1,9 +1,14 @@
 // Subscribe to collection on startup.
 Deps.autorun(function(){
     Session.set('gamesLoaded', false);
+
+    // Subscribe to the match
     Meteor.subscribe('match', Session.get('match'), function onComplete(){
             Session.set('gamesLoaded', true);
     });
+
+    // Subscribe to the chat
+    Meteor.subscribe('messages', Session.get('match'));
 });
 
 Template.match.matchId = function(){
@@ -105,6 +110,19 @@ Template.match.events = {
             Meteor.call('playCard', Session.get('match'), caravanIndex, card, target);
             Session.set('cardSelected', false);
             $('.show-marker').removeClass('show-marker');
+        }
+    },
+
+    'keypress #chat-input': function(e){
+        if(e.keyCode == 13){
+            var match = getMatch(),
+                message = $(e.target).val();
+
+            $(e.target).val('');
+
+            Meteor.call('sendMessage', match._id, message);
+
+            return false;
         }
     }
 };

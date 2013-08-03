@@ -45,6 +45,5 @@ Meteor.publish('match', function(matchId){
     }
 
     // Return cursor for client
-    return Games.find({ _id: matchId }
-    );
+    return Games.find({ _id: matchId });
 });

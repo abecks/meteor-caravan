@@ -16,13 +16,98 @@ body{
   background-size:cover;
   color:#fff;
   overflow:hidden;
+  border-right:200px solid transparent;
+  .box-sizing(border-box);
 }
 
-.match-details{
-  position: absolute;
-  top: 60px;
-  left: 3vw;
+#sidebar{
+  position:absolute;
+  right:0;
+  top:0;
+  height:100%;
+  width:200px;
+  background:#ede3da;
+  .box-sizing(border-box);
+  padding-top:@navbarHeight;
+
+
+  .match-details{
+    background:#4a2713;
+    color:#FFCA84;
+    padding:20px;
+    font-family: 'Patrick Hand', cursive;
+    .box-shadow(3px 0 6px rgba(0,0,0,0.5));
+
+    .match-details-players{
+      text-align:center;
+      font-size:1.4em;
+      line-height:1em;
+      white-space:nowrap;
+      overflow:hidden;
+      position:relative;
+
+      .versus{
+        color:#e6c79e;
+        line-height:1.4em;
+      }
+    }
+  }
+
+  #chat{
+    .box-sizing(border-box);
+    border:20px solid transparent;
+    border-right-width:0px;
+    padding-right:20px;
+    padding-top:20px;
+    border-top:195px solid transparent;
+    border-bottom:80px solid transparent;
+    position:absolute;
+    top:0;
+    left:0;
+    overflow:hidden;
+    overflow-y:auto;
+    height:100%;
+    scrollbar-track-color: red;
+    ::-webkit-scrollbar-track{
+
+      background-color:red;
+    }
+
+    #chat-messages{
+      list-style:none;
+      margin:0;
+
+
+
+
+      .chat-message{
+        margin-bottom:10px;
+
+        .message-content{
+
+        }
+      }
+    }
+
+
+  }
+
+  #chat-input{
+    position:absolute;
+    bottom:10px;
+    left:10px;
+    width:165px;
+    height:40px;
+    resize:none;
+    margin:0;
+  }
+
+
+
+
+
 }
+
 
 #gameboard{
 

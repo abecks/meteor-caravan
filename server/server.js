@@ -283,7 +283,35 @@ Meteor.methods({
         Games.update( game._id, game);
 
         return true;
+    },
+
+    /**
+     * Sends a chat message.
+     * @param message
+     */
+    sendMessage: function(match, message){
+        var user = Meteor.users.findOne({ _id: this.userId }),
+        game = Games.findOne({ _id: match });
+
+        // Verify user is part of the match
+        if(game.player1 !== user.username && game.player2 !== user.username) return false;
+
+        // Add chat message to document
+        game.chat.push({
+            author: user.username,
+            content: htmlEntities(message)
+        });
+
+        // Add to messages collection
+        Messages.insert({
+            game: match,
+            author: user.username,
+            content: htmlEntities(message)
+        });
+
+        return true;
     }
+
 });
 
 Meteor.startup(function () {
@@ -340,18 +368,19 @@ var calculateStackValue = function(stack){
  * @param public - Whether or not the game is public.
  * @returns {*|null}
  */
-var createGame = function(userId, public){
+var createGame = function(userId, visibility){
     var user = Meteor.users.findOne({ _id: userId });
     if(typeof user == 'undefined') return false;
 
-    return Games.insert({
+    var gameId = Games.insert({
         player1: user.username,
         player2: null,
         created: (new Date()).getTime(),
         winner: false,
         turn: 'player1',
-        'public': public,
+        'public': visibility,
         moves: [],
+        chat: [],
         caravans: [
             {
                 from: randomCaravanDestination(),
@@ -407,47 +436,10 @@ var createGame = function(userId, public){
             'player2': generateDeck()
         }
     });
+
+    return gameId;
 };
 
-/**
- * Finds a card by id anywhere in a specified caravan stack.
- * @param stack
- * @param target
- * @returns {boolean}
- */
-var searchCaravanStack = function(stack, target){
-    var card = false;
-
-    for(var i = 0; i < stack.length; i++){
-        var cardCursor = stack[i];
-
-        if(cardCursor.id == target){ // Root level card
-
-            card = cardCursor;
-            card.index = i;
-
-        }else{ // Search in modifiers if the card has any
-
-            if(typeof cardCursor.modifiers !== 'undefined' && cardCursor.modifiers !== null){
-                for(var x = 0; x < cardCursor.modifiers.length; x++){
-                    var modifierCursor = cardCursor.modifiers[x];
-
-                    if(modifierCursor.id == target){
-                        card = modifierCursor;
-                        card.index = x;
-                        card.modifier = true;
-                        card.parent = cardCursor.id;
-                    }
-
-                }
-            }
-        }
-    }
-
-    console.log('search result:', card);
-
-    return card;
-};
 
 /**
  * Generates a new game deck.
