@@ -253,8 +253,6 @@ updatePollTime = function(){
     Meteor.call('updatePollTime', match._id, function(err, id){
         if(err) console.log(err);
     });
-
-    console.log(match);
 };
 
 /*
