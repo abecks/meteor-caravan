@@ -2,7 +2,7 @@
 
     <div class="caravan">
 
-        <div class="caravan-top-cards caravan-cards {{ playerClass 'top' 'cards' }}">
+        <div class="caravan-top-cards caravan-cards {{ playerClass 'top' 'cards' }} {{ setup 'top' this }}">
             {{#each topCards this}}
                 {{{ cardWithModifiers }}}
             {{/each}}
@@ -21,7 +21,7 @@
         </div>
 
 
-        <div class="caravan-bottom-cards caravan-cards {{ playerClass 'bottom' 'cards' }}">
+        <div class="caravan-bottom-cards caravan-cards {{ playerClass 'bottom' 'cards' }} {{setup 'bottom' this }}">
             {{#each bottomCards this}}
                 {{{ cardWithModifiers }}}
             {{/each}}

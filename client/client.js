@@ -168,7 +168,6 @@ showMove = function(player,caravan,card,target){
         $card.addClass('slideIn');
 
         if(typeof target != 'undefined' && target != null){
-
             // Find target card
             var $target = $('.card[data-id='+target.id+']');
 
@@ -193,26 +192,14 @@ showMove = function(player,caravan,card,target){
                 $modifiers.children().eq(target.index[1]).after($card);
 
             }
-
-
         }else{ // Add to caravan normally
-            var position;
-            if(player == 'player1'){
-                position = '.player1-cards';
-            }else{
-                position = '.player2-cards';
-            }
-
-            $card.appendTo($caravan.children(position));
+            var $position = $caravan.children('.'+player+'-cards');
+            $card.appendTo($position);
         }
-
-
 
         // Begin animation
         setTimeout(function(){
             $card.removeClass('slideIn');
-
-
             if(card.value == 'jack'){
                 var $cards = $card.add($target);
 
@@ -223,8 +210,6 @@ showMove = function(player,caravan,card,target){
                         $cards.remove();
                     }, 1000);
                 }, 1100);
-
-
             }
         }, 50);
     }

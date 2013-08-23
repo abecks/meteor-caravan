@@ -35,6 +35,20 @@ Template.caravan.oversold = function(position, caravan){
     if(value > 26) return 'oversold';
 };
 
+Template.caravan.setup = function(position,caravan){
+    console.log(caravan);
+    var setup = false;
+    if(position == 'top'){
+        var opponent = getOpponent();
+        setup = caravan[opponent].setup;
+    }else{
+        var seat = getSeat(Meteor.user(), getMatch());
+        setup = caravan[seat].setup;
+    }
+
+    return (setup ? 'setup' : '');
+};
+
 Template.caravan.topValue = function(){
     var opponent = getOpponent();
     return this[opponent].value;
@@ -90,3 +104,4 @@ Template.caravan.playerClass = function(position,slug){
 
     }
 };
+

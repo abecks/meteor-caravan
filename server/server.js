@@ -142,6 +142,7 @@ Meteor.methods({
         if(target === null){
 
             game.caravans[caravan][player].cards.push({ id: card.id, suit: card.suit, value: card.value });
+            game.caravans[caravan][player].setup = true;
 
         }else{ // Add as modifier card
 
@@ -389,13 +390,15 @@ var createGame = function(userId, visibility){
                 'player1': {
                     value: 0,
                     direction: null,
-                    cards: []
+                    cards: [],
+                    setup: false
                 },
 
                 'player2': {
                     value: 0,
                     direction: null,
-                    cards: []
+                    cards: [],
+                    setup: false
                 }
             },
             {
@@ -405,13 +408,15 @@ var createGame = function(userId, visibility){
                 'player1': {
                     value: 0,
                     direction: null,
-                    cards: []
+                    cards: [],
+                    setup: false
                 },
 
                 'player2': {
                     value: 0,
                     direction: null,
-                    cards: []
+                    cards: [],
+                    setup: false
                 }
             },
             {
@@ -421,13 +426,15 @@ var createGame = function(userId, visibility){
                 'player1': {
                     value: 0,
                     direction: null,
-                    cards: []
+                    cards: [],
+                    setup: false
                 },
 
                 'player2': {
                     value: 0,
                     direction: null,
-                    cards: []
+                    cards: [],
+                    setup: false
                 }
             }
         ],

@@ -130,6 +130,25 @@ Template.match.events = {
 
             return false;
         }
+    },
+
+    'mouseenter .marker-stack': function(e){
+        // Find the active card
+        var $card = $('#deck').find('.card.active'),
+            card = {
+                id: $card.data('id'),
+                suit: $card.data('suit'),
+                value: $card.data('value')
+            },
+            caravan = $(e.currentTarget).parents('.caravan').index();
+
+        // Verify the move is legal
+        var match = getMatch();
+        if(!isLegalMove(match.caravans[caravan][getSeat(Meteor.user(),match)], card, null)){
+            $(e.target).addClass('illegal-move');
+        }else{
+            $(e.target).removeClass('illegal-move');
+        }
     }
 };
 
@@ -171,23 +190,31 @@ Deps.autorun(function(){
  */
 var showCaravanControls = function(){
     // Determine the player's seat
-    var seat = Session.get('seat');
-
-    $('.caravan').each(function(){
-        // Place basic stack marker in each caravan
-        var $stack = $('<button></button>', {
-            'class': 'card card-marker marker-stack select-caravan'
-        });
-
-        var cardStack;
-        if(seat == 'player1'){
-            cardStack = '.player1-cards';
-        }else{
-            cardStack = '.player2-cards';
-        }
-
-        $stack.appendTo($(this).find(cardStack));
+    var seat = Session.get('seat'),
+        match = getMatch(),
+        caravansSetup = 0,
+        $marker = $('<button></button>', {
+        'class': 'card card-marker marker-stack select-caravan'
     });
+
+    // Have all of the caravans been setup? (Had a card placed once)
+    $.each(match.caravans, function(i, caravan){
+        if(caravan[seat].setup){
+            caravansSetup++;
+        }else{
+            var $caravan = $('.caravan:eq('+i+')'),
+                $position = $caravan.children('.'+seat+'-cards');
+            // Place a marker here
+            $marker.clone().appendTo($position);
+        }
+    });
+
+    // If all of the caravans have been setup, place a marker in each caravan
+    if(caravansSetup == 3){
+        $('.caravan').each(function(){
+            $marker.clone().appendTo($(this).find('.'+seat+'-cards'));
+        });
+    }
 };
 
 /**
@@ -201,6 +228,7 @@ var hideCaravanControls = function(){
  * Runs when a card is selected.
  */
 Deps.autorun(function(){
+    console.log(Session.get('cardSelected'));
    if(Session.get('cardSelected')){
        showCaravanControls();
    }else{
