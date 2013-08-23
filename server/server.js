@@ -28,6 +28,7 @@ Meteor.methods({
         if(typeof game != 'undefined'){
             return game._id;
         }else{
+            cleanDB();
             return createGame(this.userId, true);
         }
     },
@@ -37,6 +38,7 @@ Meteor.methods({
      * @returns {*}
      */
     'createGame': function(){
+        cleanDB();
         return createGame(this.userId, false);
     },
 
@@ -312,6 +314,24 @@ Meteor.methods({
         });
 
         return true;
+    },
+
+    /**
+     * Updates the player's timestamp in the specified match.
+     * @param match
+     */
+    updatePollTime: function(match){
+        var game = Games.findOne({ _id: match }),
+            user = Meteor.users.findOne({ _id: this.userId });
+
+        if(user == null || game == null) return false;
+
+        var seat = getSeat(user,game);
+
+        // Update match in database
+        var params = { $set: {} };
+        params.$set[seat+'_polltime'] = new Date().getTime();
+        Games.update(game._id, params);
     }
 
 });
@@ -377,6 +397,8 @@ var createGame = function(userId, visibility){
     var gameId = Games.insert({
         player1: user.username,
         player2: null,
+        player1_polltime: null,
+        player2_polltime: null,
         created: (new Date()).getTime(),
         winner: false,
         turn: 'player1',
@@ -445,6 +467,21 @@ var createGame = function(userId, visibility){
     });
 
     return gameId;
+};
+
+/**
+ * Garbage collection for the MongoDB. Deletes stale, complete, or
+ * otherwise derelict matches.
+ */
+var cleanDB = function(){
+
+    // Delete all complete matches
+
+    // Delete all stale matches
+    // A stale match is older than 10 minutes,
+
+    // Delete all
+
 };
 
 

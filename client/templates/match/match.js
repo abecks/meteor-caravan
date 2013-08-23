@@ -7,7 +7,7 @@ Deps.autorun(function(){
 
     // Subscribe to the match
     Meteor.subscribe('match', Session.get('match'), function onComplete(){
-            Session.set('gamesLoaded', true);
+        Session.set('gamesLoaded', true);
 
         // Subscribe to the chat
         Meteor.subscribe('messages', Session.get('match'));
@@ -182,6 +182,11 @@ Deps.autorun(function(){
            }
        });
 
+       // Update poll time
+       if(!pollTimer){
+           pollTimer = setInterval(updatePollTime, 180000);
+           updatePollTime();
+       }
    }
 });
 
@@ -228,7 +233,6 @@ var hideCaravanControls = function(){
  * Runs when a card is selected.
  */
 Deps.autorun(function(){
-    console.log(Session.get('cardSelected'));
    if(Session.get('cardSelected')){
        showCaravanControls();
    }else{
@@ -236,5 +240,29 @@ Deps.autorun(function(){
    }
 });
 
+var pollTimer = false;
+updatePollTime = function(){
+    var match = getMatch();
 
+    // If the player is not in a match, kill the timer
+    if(match == null && pollTimer){
+        clearInterval(pollTimer);
+        pollTimer = false;
+    }
 
+    Meteor.call('updatePollTime', match._id, function(err, id){
+        if(err) console.log(err);
+    });
+
+    console.log(match);
+};
+
+/*
+window.onbeforeunload = function(){
+    // Currently in a match
+    if(Session.get('gamesLoaded')){
+        return confirm('Are you sure you want to leave the game?');
+    }
+
+    return true;
+};*/

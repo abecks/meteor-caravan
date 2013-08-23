@@ -36,7 +36,6 @@ Template.caravan.oversold = function(position, caravan){
 };
 
 Template.caravan.setup = function(position,caravan){
-    console.log(caravan);
     var setup = false;
     if(position == 'top'){
         var opponent = getOpponent();
