@@ -4,7 +4,9 @@
         {{#if matchLoaded}}
 
         {{#if match.winner}}
-        <div class="match-winner match-prompt">{{ winnerName }} Wins!</div>
+        <div class="match-winner match-prompt">
+            <div class="match-prompt-title">{{ winnerName }} Wins!</div>
+        </div>
         {{/if}}
 
         {{#if waitingForOpponent}}
