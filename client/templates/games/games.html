@@ -4,6 +4,8 @@
     <table class="table table-bordered table-striped" id="games">
         <thead>
         <tr>
+            <th>Id</th>
+            <th>Public</th>
             <th>Player 1</th>
             <th>Player 2</th>
             <th>Created</th>
@@ -12,8 +14,10 @@
         <tbody>
         {{#each games}}
         <tr>
-            <td>{{player1}}</td>
-            <td>{{player2}}</td>
+            <td>{{_id}}</td>
+            <td>{{public}}</td>
+            <td>{{player1}}<br>{{player1_polltime}}</td>
+            <td>{{player2}}<br>{{player2_polltime}}</td>
             <td>{{created}}</td>
         </tr>
         {{/each}}

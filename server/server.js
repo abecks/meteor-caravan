@@ -6,16 +6,16 @@ Meteor.methods({
     /**
      * Maintenance, delete all games.
      */
-    'deleteGames': function(){
-        if(isAdmin)
+    'deleteGames': function () {
+        if (isAdmin)
             Games.remove({});
     },
 
     /**
      * Maintenance, delete all users.
      */
-    'deleteUsers': function(){
-        if(isAdmin)
+    'deleteUsers': function () {
+        if (isAdmin)
             Meteor.users.remove({});
     },
 
@@ -23,11 +23,13 @@ Meteor.methods({
      * Find a game for the client, if no game is found, create one.
      * @returns {*}
      */
-    'joinGame': function(){
-        var game = Games.findOne({ $or: [ {player1: null}, {player2: null}], 'public': true });
-        if(typeof game != 'undefined'){
+    'joinGame': function () {
+        var now = new Date().getTime() - 300000; // 5 minutes
+        var game = Games.findOne({ 'player2': null, 'public': true, 'player1_polltime': {$gte: now } }, { sort: { 'created': 1 } });
+
+        if (typeof game != 'undefined') {
             return game._id;
-        }else{
+        } else {
             cleanDB();
             return createGame(this.userId, true);
         }
@@ -37,7 +39,7 @@ Meteor.methods({
      * Creates a new private game.
      * @returns {*}
      */
-    'createGame': function(){
+    'createGame': function () {
         cleanDB();
         return createGame(this.userId, false);
     },
@@ -47,21 +49,21 @@ Meteor.methods({
      * @param matchId
      * @returns {*}
      */
-    seatPlayer: function(matchId){
+    seatPlayer: function (matchId) {
         // Seat the player
         var game = Games.findOne({ _id: matchId }),
             user = Meteor.users.findOne({ _id: this.userId });
 
         // Make sure user isn't already seated
-        if(game.player1 == user.username) return 'player1';
-        if(game.player2 == user.username) return 'player2';
+        if (game.player1 == user.username) return 'player1';
+        if (game.player2 == user.username) return 'player2';
 
         var player;
-        if(game.player1 == null || typeof game.player1 == 'undefined'){
+        if (game.player1 == null || typeof game.player1 == 'undefined') {
             player = 'player1';
-        }else if(game.player2 == null || typeof game.player2 == 'undefined'){
+        } else if (game.player2 == null || typeof game.player2 == 'undefined') {
             player = 'player2';
-        }else{
+        } else {
             return false;
         }
 
@@ -80,29 +82,29 @@ Meteor.methods({
      * @param target
      * @returns {boolean}
      */
-    playCard: function(match,caravan,card,target){
+    playCard: function (match, caravan, card, target) {
         var user = Meteor.users.findOne({ _id: this.userId }),
             game = Games.findOne({ _id: match });
 
         // Make sure its the player's turn
-        if(!isTurn(user,game)) return false;
+        if (!isTurn(user, game)) return false;
 
         // Get the player's deck and position
-        var player = getSeat(user,game),
+        var player = getSeat(user, game),
             deck = game.decks[player];
 
         // Verify the card is in the player's hand
-        if(!isCardInHand(deck,card.id)) return false;
+        if (!isCardInHand(deck, card.id)) return false;
 
         // Find the card in the deck
-        card = findCardInDeck(deck,card.id);
-        if(!card) return false;
+        card = findCardInDeck(deck, card.id);
+        if (!card) return false;
 
         // Verify the move is legal
-        if(!isLegalMove(game.caravans[caravan][player], card, target)) return false;
+        if (!isLegalMove(game.caravans[caravan][player], card, target)) return false;
 
         // Stack direction switching for regular cards
-        switch(card.suit){
+        switch (card.suit) {
             case 'king':
             case 'jack':
             case 'queen':
@@ -112,25 +114,25 @@ Meteor.methods({
 
                 // Stack direction switching
                 var stack = game.caravans[caravan][player],
-                    lastCardInStack = stack.cards[stack.cards.length-1];
+                    lastCardInStack = stack.cards[stack.cards.length - 1];
 
-                if(typeof lastCardInStack !== 'undefined'){
+                if (typeof lastCardInStack !== 'undefined') {
 
                     // If the card is contrary to the direction and is the same suit, changes the direction, the same number clears the direction
-                    if(card.suit == lastCardInStack.suit){
-                        if(stack.direction == 'asc' && card.value < lastCardInStack.value){
+                    if (card.suit == lastCardInStack.suit) {
+                        if (stack.direction == 'asc' && card.value < lastCardInStack.value) {
                             stack.direction = 'desc';
-                        }else if(stack.direction == 'desc' && card.value > lastCardInStack.value){
+                        } else if (stack.direction == 'desc' && card.value > lastCardInStack.value) {
                             stack.direction = 'asc';
                         }
                     }
 
-                    if(stack.direction == null){
+                    if (stack.direction == null) {
 
                         // Set the direction for the first time
-                        if(card.value > lastCardInStack.value){
+                        if (card.value > lastCardInStack.value) {
                             stack.direction = 'asc';
-                        }else if(card.value < lastCardInStack.value){
+                        } else if (card.value < lastCardInStack.value) {
                             stack.direction = 'desc';
                         }
 
@@ -141,36 +143,36 @@ Meteor.methods({
 
         var params;
         // Add to the desired caravan
-        if(target === null){
+        if (target === null) {
 
             game.caravans[caravan][player].cards.push({ id: card.id, suit: card.suit, value: card.value });
             game.caravans[caravan][player].setup = true;
 
-        }else{ // Add as modifier card
+        } else { // Add as modifier card
 
 
             // Lookup target card
             var targetCard = false;
-            if(typeof target.index == 'number'){ // Root card targetted
+            if (typeof target.index == 'number') { // Root card targetted
                 targetCard = game.caravans[caravan][target.stack].cards[target.index];
 
-            }else{ // Modifier card targetted
+            } else { // Modifier card targetted
                 var parentCard = game.caravans[caravan][target.stack].cards[target.index[0]];
                 targetCard = parentCard.modifiers[target.index[1]];
             }
 
-            switch(card.value){
+            switch (card.value) {
                 case 'king':
 
                     // Add as modifier to target card
-                    if(typeof target.index == 'number'){ // Root card
-                        if(typeof targetCard.modifiers == 'undefined' || targetCard.modifiers == null){
+                    if (typeof target.index == 'number') { // Root card
+                        if (typeof targetCard.modifiers == 'undefined' || targetCard.modifiers == null) {
                             targetCard.modifiers = [];
                         }
                         targetCard.modifiers.splice(0, 0, card); // Add to front of modifiers array
-                    }else{ // Add to modifier chain
-                        if(!targetCard) return false;
-                        parentCard.modifiers.splice(targetCard.index, 0 , card);
+                    } else { // Add to modifier chain
+                        if (!targetCard) return false;
+                        parentCard.modifiers.splice(targetCard.index, 0, card);
                     }
 
                     break;
@@ -178,9 +180,9 @@ Meteor.methods({
                 case 'jack':
 
                     // Remove card
-                    if(typeof target.index == 'number'){ // Root card
+                    if (typeof target.index == 'number') { // Root card
                         game.caravans[caravan][target.stack].cards.splice(target.index, 1);
-                    }else{ // Modifier card
+                    } else { // Modifier card
                         parentCard.modifiers.splice(target.index[1], 1);
                     }
 
@@ -190,9 +192,9 @@ Meteor.methods({
 
                     // Change direction of stack
                     var direction = game.caravans[caravan][target.stack].direction;
-                    if(direction == 'asc'){
+                    if (direction == 'asc') {
                         direction = 'desc';
-                    }else{
+                    } else {
                         direction = 'asc';
                     }
 
@@ -210,34 +212,34 @@ Meteor.methods({
 
 
         // Recalculate sold caravans
-        for(var i = 0; i < game.caravans.length; i++){
+        for (var i = 0; i < game.caravans.length; i++) {
             var caravanCursor = game.caravans[i];
 
             // Recalculate sold flag
             caravanCursor.sold = false;
 
             // Player1 wins
-            if(
-                // Score qualifies
+            if (
+            // Score qualifies
                 (caravanCursor.player1.value >= 21 && caravanCursor.player1.value <= 26)
-                &&
-                // Beats player 2 or player 2 is over 26
-                (caravanCursor.player1.value > caravanCursor.player2.value || caravanCursor.player2.value > 26)
-            ){
+                    &&
+                    // Beats player 2 or player 2 is over 26
+                    (caravanCursor.player1.value > caravanCursor.player2.value || caravanCursor.player2.value > 26)
+                ) {
                 caravanCursor.sold = 'player1';
             }
             // Player2 wins
-            else if(
-                // Score qualifies
+            else if (
+            // Score qualifies
                 (caravanCursor.player2.value >= 21 && caravanCursor.player2.value <= 26)
                     &&
                     // Beats player 1 or player 1 is over 26
                     (caravanCursor.player2.value > caravanCursor.player1.value || caravanCursor.player1.value > 26)
-            ){
+                ) {
                 caravanCursor.sold = 'player2';
             }
             // Its a tie
-            else if(caravanCursor.player1.value == caravanCursor.player2.value){
+            else if (caravanCursor.player1.value == caravanCursor.player2.value) {
                 caravanCursor.sold = true;
             }
         }
@@ -246,22 +248,22 @@ Meteor.methods({
         // if its a tie it doesnt think its sold
 
         // If all caravans are sold, we might have a winner
-        if(game.caravans[0].sold && game.caravans[1].sold && game.caravans[2].sold){
+        if (game.caravans[0].sold && game.caravans[1].sold && game.caravans[2].sold) {
             var player1Sold = 0,
                 player2Sold = 0;
 
             // Has either player sold at least two of the caravans?
-            if(game.caravans[0].sold == 'player1') player1Sold++;
-            if(game.caravans[1].sold == 'player1') player1Sold++;
-            if(game.caravans[2].sold == 'player1') player1Sold++;
+            if (game.caravans[0].sold == 'player1') player1Sold++;
+            if (game.caravans[1].sold == 'player1') player1Sold++;
+            if (game.caravans[2].sold == 'player1') player1Sold++;
 
-            if(game.caravans[0].sold == 'player2') player2Sold++;
-            if(game.caravans[1].sold == 'player2') player2Sold++;
-            if(game.caravans[2].sold == 'player2') player2Sold++;
+            if (game.caravans[0].sold == 'player2') player2Sold++;
+            if (game.caravans[1].sold == 'player2') player2Sold++;
+            if (game.caravans[2].sold == 'player2') player2Sold++;
 
-            if(player1Sold >= 2){
+            if (player1Sold >= 2) {
                 game.winner = 'player1';
-            }else if(player2Sold >= 2){
+            } else if (player2Sold >= 2) {
                 game.winner = 'player2';
             }
         }
@@ -284,7 +286,7 @@ Meteor.methods({
         // Update match in database
         params = { $set: {} };
         params.$set['match'] = game;
-        Games.update( game._id, game);
+        Games.update(game._id, game);
 
         return true;
     },
@@ -293,12 +295,12 @@ Meteor.methods({
      * Sends a chat message.
      * @param message
      */
-    sendMessage: function(match, message){
+    sendMessage: function (match, message) {
         var user = Meteor.users.findOne({ _id: this.userId }),
-        game = Games.findOne({ _id: match });
+            game = Games.findOne({ _id: match });
 
         // Verify user is part of the match
-        if(game.player1 !== user.username && game.player2 !== user.username) return false;
+        if (game.player1 !== user.username && game.player2 !== user.username) return false;
 
         // Add chat message to document
         game.chat.push({
@@ -320,17 +322,17 @@ Meteor.methods({
      * Updates the player's timestamp in the specified match.
      * @param match
      */
-    updatePollTime: function(match){
+    updatePollTime: function (match) {
         var game = Games.findOne({ _id: match }),
             user = Meteor.users.findOne({ _id: this.userId });
 
-        if(user == null || game == null) return false;
+        if (user == null || game == null) return false;
 
-        var seat = getSeat(user,game);
+        var seat = getSeat(user, game);
 
         // Update match in database
         var params = { $set: {} };
-        params.$set[seat+'_polltime'] = new Date().getTime();
+        params.$set[seat + '_polltime'] = new Date().getTime();
         Games.update(game._id, params);
     }
 
@@ -345,15 +347,15 @@ Meteor.startup(function () {
  * @param stack
  * @returns {number}
  */
-var calculateStackValue = function(stack){
+var calculateStackValue = function (stack) {
     var stackValue = 0;
 
-    for(var i = 0; i < stack.length; i++){
+    for (var i = 0; i < stack.length; i++) {
         var cardCursor = stack[i];
 
         // Root level card value
         var value;
-        switch(cardCursor.value){
+        switch (cardCursor.value) {
             case 'queen':
             case 'king':
             case 'jack':
@@ -365,11 +367,11 @@ var calculateStackValue = function(stack){
         stackValue += value;
 
         // Modifiers
-        if(typeof cardCursor.modifiers != 'undefined' && cardCursor.modifiers != null){
-            for(var x = 0; x < cardCursor.modifiers.length; x++){
+        if (typeof cardCursor.modifiers != 'undefined' && cardCursor.modifiers != null) {
+            for (var x = 0; x < cardCursor.modifiers.length; x++) {
 
                 var modifierCard = cardCursor.modifiers[x];
-                switch(modifierCard.value){
+                switch (modifierCard.value) {
                     case 'king':
                         // Double value of the root card
                         stackValue += parseInt(cardCursor.value);
@@ -390,9 +392,9 @@ var calculateStackValue = function(stack){
  * @param public - Whether or not the game is public.
  * @returns {*|null}
  */
-var createGame = function(userId, visibility){
+var createGame = function (userId, visibility) {
     var user = Meteor.users.findOne({ _id: userId });
-    if(typeof user == 'undefined') return false;
+    if (typeof user == 'undefined') return false;
 
     var gameId = Games.insert({
         player1: user.username,
@@ -473,15 +475,19 @@ var createGame = function(userId, visibility){
  * Garbage collection for the MongoDB. Deletes stale, complete, or
  * otherwise derelict matches.
  */
-var cleanDB = function(){
+var cleanDB = function () {
 
-    // Delete all complete matches
+    // Delete all abandoned matches - neither player has moved in 48 hours
+    var abandoned = new Date().getTime() - 172800000; // 48 hours
+    Games.remove({
+        $and: [
+            { 'player1_polltime': {$lte: abandoned }},
+            { 'player2_polltime': {$lte: abandoned }}
+        ]
+    });
 
-    // Delete all stale matches
-    // A stale match is older than 10 minutes,
-
-    // Delete all
-
+    // Delete all finishes matches
+    Games.remove({'winner': true});
 };
 
 
@@ -489,12 +495,12 @@ var cleanDB = function(){
  * Generates a new game deck.
  * @returns {*}
  */
-var generateDeck = function(){
+var generateDeck = function () {
     var deck = JSON.parse(JSON.stringify(defaultDeck));
     deck = shuffle(deck);
 
     // Give each card a unique ID in the deck
-    for(var i = 0; i < deck.length; i++){
+    for (var i = 0; i < deck.length; i++) {
         deck[i].id = Meteor.uuid();
     }
 
@@ -506,7 +512,7 @@ var generateDeck = function(){
  * @param userId
  * @returns {boolean}
  */
-var isAdmin = function(userId){
+var isAdmin = function (userId) {
     var user = Meteor.users.findOne({ _id: userId });
     return user.username == 'admin';
 };
@@ -518,15 +524,15 @@ var isAdmin = function(userId){
  * @param card
  * @returns {*}
  */
-var isCardInHand = function(deck,card){
+var isCardInHand = function (deck, card) {
     // Hand is the first eight cards
     var hand = deck.slice(0);
-    hand = hand.splice(0,8);
+    hand = hand.splice(0, 8);
 
     // Make sure the desired playing card is in the hand
     var present = false;
-    for(var i = 0; i < hand.length; i++){
-        if(hand[i].id == card){
+    for (var i = 0; i < hand.length; i++) {
+        if (hand[i].id == card) {
             present = true;
             break;
         }
@@ -534,7 +540,7 @@ var isCardInHand = function(deck,card){
     return present;
 };
 
-var randomCaravanDestination = function(){
+var randomCaravanDestination = function () {
     return shuffle(caravanDestinations.slice(0))[0];
 };
 

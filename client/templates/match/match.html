@@ -1,27 +1,34 @@
 <template name="match">
 
     <div id="match">
-    {{#if matchLoaded}}
+        {{#if matchLoaded}}
 
         {{#if match.winner}}
-            <div class="match-winner">{{ winnerName }} Wins!</div>
+        <div class="match-winner match-prompt">{{ winnerName }} Wins!</div>
         {{/if}}
 
+        {{#if waitingForOpponent}}
+        <div class="match-waitingforopponent match-prompt">
+            <div class="match-prompt-title">Waiting for Opponent</div>
+            Invite a friend with this link: <input type="text" class="invite-link"
+                                                   value="http://caravan.meteor.com/{{ match._id }}">
+        </div>
+        {{/if}}
 
 
         {{#constant}}
         <div id="gameboard" class="caravans">
-        {{#each match.caravans}}
+            {{#each match.caravans}}
             {{> caravan}}
-        {{/each}}
+            {{/each}}
         </div>
         {{/constant}}
 
         {{{ deck }}}
 
-    {{else}}
+        {{else}}
         <h1>Loading...</h1>
-    {{/if }}
+        {{/if }}
     </div>
 
     <div id="sidebar">
@@ -32,12 +39,11 @@
             <div class="match-details-players">
                 {{ match.player1 }}
                 <div class="versus">vs</div>
+                {{#if match.player2}}
                 {{ match.player2 }}
+                {{/if}}
             </div>
 
-            Turn: {{ match.turn }}
-            <br>
-            {{ matchVisibility }}
         </div>
         {{/if }}
 

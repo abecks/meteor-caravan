@@ -221,12 +221,11 @@ defaultDeck = [
 ];
 
 
-
 /*
  How to randomize a javascript array?
  http://stackoverflow.com/questions/2450954/how-to-randomize-a-javascript-array
  */
-shuffle = function(array){
+shuffle = function (array) {
     var currentIndex = array.length
         , temporaryValue
         , randomIndex
@@ -253,7 +252,7 @@ shuffle = function(array){
  * @param user
  * @param game
  */
-isTurn = function(user,game){
+isTurn = function (user, game) {
     return (game.player1 == user.username && game.turn == 'player1')
         || (game.player2 == user.username && game.turn == 'player2');
 };
@@ -262,13 +261,13 @@ isTurn = function(user,game){
  * Determine the specified player's seat in the game. (player1 or player2)
  * @param user
  * @param game
- * @returns {boolean}
+ * @returns {string}
  */
-getSeat = function(user,game){
-    var player = false;
-    if(game.player1 == user.username){
+getSeat = function (user, game) {
+    var player = null;
+    if (game.player1 == user.username) {
         player = 'player1';
-    }else if(game.player2 == user.username){
+    } else if (game.player2 == user.username) {
         player = 'player2';
     }
     return player;
@@ -281,10 +280,10 @@ getSeat = function(user,game){
  * @param cardId
  * @returns {*}
  */
-findCardInDeck = function(deck,cardId){
-    var card  = false;
-    for(var i = 0; i < deck.length; i++){
-        if(deck[i].id == cardId){
+findCardInDeck = function (deck, cardId) {
+    var card = false;
+    for (var i = 0; i < deck.length; i++) {
+        if (deck[i].id == cardId) {
             card = deck[i];
             card.index = i;
         }
@@ -299,13 +298,13 @@ findCardInDeck = function(deck,cardId){
  * @param card
  * @param target
  */
-isLegalMove = function(stack,card,target){
+isLegalMove = function (stack, card, target) {
 
     // Are we trying to pl1 a modifier?
-    if(typeof target != 'undefined' && target != null){
+    if (typeof target != 'undefined' && target != null) {
 
         // Only kings and jacks can be pl1d as modifiers
-        switch(card.value){
+        switch (card.value) {
             case 'king':
             case 'jack':
                 return true; // can go anywhere!
@@ -316,34 +315,34 @@ isLegalMove = function(stack,card,target){
 
 
     // Are we placing a regular card?
-    if(target == null){
+    if (target == null) {
 
         // No kings or jacks
-        switch(card.value){
+        switch (card.value) {
             case 'king':
             case 'jack':
                 return false;
         }
 
-        var lastCardInStack = stack.cards[stack.cards.length-1];
-        if(typeof lastCardInStack !== 'undefined'){
+        var lastCardInStack = stack.cards[stack.cards.length - 1];
+        if (typeof lastCardInStack !== 'undefined') {
             // If the new card isn't the same suit as the last card, it must follow the direction of the stack
-            if(card.suit != lastCardInStack.suit){
+            if (card.suit != lastCardInStack.suit) {
 
-                if(card.value == '1') card.value = 1;
+                if (card.value == '1') card.value = 1;
 
                 console.log('Direction analysis: ', stack.direction, card.value, lastCardInStack.value);
 
                 // Card can't be of equal value if is a different suit
-                if(card.value == lastCardInStack.value) return false;
+                if (card.value == lastCardInStack.value) return false;
 
                 // Going up or down?
-                if(stack.direction == 'asc'){ // Up
+                if (stack.direction == 'asc') { // Up
                     // Card must be of greater value than the last one in the stack, queens allow you to change direction
-                    if(card.value != 'queen' && card.value < lastCardInStack.value) return false;
-                }else if(stack.direction == 'desc'){ // Down
+                    if (card.value != 'queen' && card.value < lastCardInStack.value) return false;
+                } else if (stack.direction == 'desc') { // Down
                     // Card must be of lesser value than the last one in the stack, queens allow you to change direction
-                    if(card.value != 'queen' && card.value > lastCardInStack.value) return false;
+                    if (card.value != 'queen' && card.value > lastCardInStack.value) return false;
                 }
 
                 console.log('Passed');
@@ -360,6 +359,6 @@ isLegalMove = function(stack,card,target){
  * @param str
  * @returns {string}
  */
-htmlEntities = function(str) {
+htmlEntities = function (str) {
     return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 };
