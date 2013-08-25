@@ -143,25 +143,6 @@ Template.match.events = {
         }
     },
 
-    'mouseenter .marker-stack': function (e) {
-        // Find the active card
-        var $card = $('#deck').find('.card.active'),
-            card = {
-                id: $card.data('id'),
-                suit: $card.data('suit'),
-                value: $card.data('value')
-            },
-            caravan = $(e.currentTarget).parents('.caravan').index();
-
-        // Verify the move is legal
-        var match = getMatch();
-        if (!isLegalMove(match.caravans[caravan][getSeat(Meteor.user(), match)], card, null)) {
-            $(e.target).addClass('illegal-move');
-        } else {
-            $(e.target).removeClass('illegal-move');
-        }
-    },
-
     'click .invite-link': function (e) {
         var input = e.target;
         input.focus();
@@ -236,7 +217,24 @@ var showCaravanControls = function () {
     // If all of the caravans have been setup, place a marker in each caravan
     if (caravansSetup == 3) {
         $('.caravan').each(function () {
-            $marker.clone().appendTo($(this).find('.' + seat + '-cards'));
+            var caravan = $(this).index();
+            var $newMarker = $marker.clone().appendTo($(this).find('.' + seat + '-cards'));
+
+            // Find the active card
+            var $card = $('#deck').find('.card.active'),
+                card = {
+                    id: $card.data('id'),
+                    suit: $card.data('suit'),
+                    value: $card.data('value')
+                };
+
+            // Verify the move is legal
+            var match = getMatch();
+            if (!isLegalMove(match.caravans[caravan][getSeat(Meteor.user(), match)], card, null)) {
+                $newMarker.addClass('illegal-move');
+            } else {
+                $newMarker.removeClass('illegal-move');
+            }
         });
     }
 };
@@ -253,7 +251,17 @@ var hideCaravanControls = function () {
  */
 Deps.autorun(function () {
     if (Session.get('cardSelected')) {
-        showCaravanControls();
+
+        var $card = $('#deck').find('.card.active'),
+            card = {
+                id: $card.data('id'),
+                suit: $card.data('suit'),
+                value: $card.data('value')
+            };
+
+        console.log($card.data('value'), isNaN($card.data('value')));
+        if (!isNaN($card.data('value')))
+            showCaravanControls();
     } else {
         hideCaravanControls();
     }
