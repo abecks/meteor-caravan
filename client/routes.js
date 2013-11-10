@@ -28,6 +28,9 @@ Router = new AppRouter;
  */
 Router.go = function(path){
     this.navigate('/'+path, {trigger: true});
+
+    // Reset window scroll position
+    $(window).scrollTop(0);
 };
 
 /**

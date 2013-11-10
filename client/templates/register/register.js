@@ -14,19 +14,25 @@ Template.register.events({
 
         // Clear loginError flag
         Session.set('registerError', false);
+
+
+        // If you are a guest, logout first
+        if(Meteor.user() != null && typeof Meteor.user().emails != 'undefined'){
+            Meteor.logout();
+        }
+
         Accounts.createUser(
-            {
-                email: email,
-                username: username,
-                password: password
-            },
-            function(error){
-                if(error){
-                    Session.set('registerError', error.reason);
-                }else{
-                    Router.go('');
-                }
-            });
+        {
+            email: email,
+            username: username,
+            password: password
+        }, function(error){
+            if(error){
+                Session.set('registerError', error.reason);
+            }else{
+                Router.go('');
+            }
+        });
     }
 });
 

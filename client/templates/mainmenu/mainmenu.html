@@ -15,12 +15,15 @@
                 </ul>
 
                 <ul class="nav pull-right">
-                    {{#if currentUser}}
-                    <li class="pull-right"><a href="/logout" class="logout">Logout</a></li>
-                    {{else}}
-                    <li class="pull-right"><a href="/login">Login</a></li>
-                    <li class="pull-right"><a href="/register">Register</a></li>
+
+                    {{#if showAuthControls}}
+                        <li class="pull-right"><a href="/login">Login</a></li>
+                        <li class="pull-right"><a href="/register">Register</a></li>
                     {{/if}}
+
+                    {{#if showLogout}}
+                        <li class="pull-right"><a href="/logout" class="logout">Logout</a></li>
+                    {{/if}} 
                 </ul>
             </div>
         </div>

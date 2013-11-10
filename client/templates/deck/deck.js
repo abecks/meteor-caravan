@@ -12,6 +12,8 @@ Template.deck.events = {
     'click .card': function(e){
         e.preventDefault();
 
+        Session.set('cardSelected', false);
+
         var match = getMatch();
 
         // Match is over
@@ -23,7 +25,7 @@ Template.deck.events = {
         var $card = $(e.currentTarget);
         if($card.hasClass('active')){
             $card.removeClass('active');
-            Session.set('cardSelected', false);
+            // Session.set('cardSelected', false);
         }else{
             $('#deck').find('.card.active').removeClass('active');
             $card.addClass('active');

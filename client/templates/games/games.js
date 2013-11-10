@@ -1,20 +1,24 @@
 // Create minimongo objects
 Games = new Meteor.Collection("games");
 
-// Subscribe to games if we're on that action
-Deps.autorun(function () {
-    if (Session.get('action') == 'games') {
-        var gamesHandler = Meteor.subscribe('games');
-    }
-});
+Template.games.created = function(){
+	// Subscribe to the games collection when this template is instanced
+	this.gamesHandler = Meteor.subscribe('games');
+}
 
+Template.games.destroyed = function(){
+	// Unsubscribe from the games collection when this template is destroyed
+	this.gamesHandler.stop();
+}
+
+// Template helper to list games
 Template.games.games = function () {
     return Games.find({}, {sort: {created: 1}});
 };
 
-////////// Events //////////
+// Template event map
 Template.games.events({
-    // Delete games
+    // Delete all games
     'click #delete-games': function (e) {
         e.preventDefault();
         Meteor.call('deleteGames');

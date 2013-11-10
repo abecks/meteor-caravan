@@ -300,10 +300,10 @@ findCardInDeck = function (deck, cardId) {
  */
 isLegalMove = function (stack, card, target) {
 
-    // Are we trying to pl1 a modifier?
+    // Are we trying to place a modifier?
     if (typeof target != 'undefined' && target != null) {
 
-        // Only kings and jacks can be pl1d as modifiers
+        // Only kings and jacks can be placed as modifiers
         switch (card.value) {
             case 'king':
             case 'jack':
@@ -324,6 +324,7 @@ isLegalMove = function (stack, card, target) {
                 return false;
         }
 
+
         var lastCardInStack = stack.cards[stack.cards.length - 1];
         if (typeof lastCardInStack !== 'undefined') {
             // If the new card isn't the same suit as the last card, it must follow the direction of the stack
@@ -331,7 +332,7 @@ isLegalMove = function (stack, card, target) {
 
                 if (card.value == '1') card.value = 1;
 
-                console.log('Direction analysis: ', stack.direction, card.value, lastCardInStack.value);
+                // console.log('Direction analysis: ', stack.direction, card.value, lastCardInStack.value);
 
                 // Card can't be of equal value if is a different suit
                 if (card.value == lastCardInStack.value) return false;
@@ -343,9 +344,12 @@ isLegalMove = function (stack, card, target) {
                 } else if (stack.direction == 'desc') { // Down
                     // Card must be of lesser value than the last one in the stack, queens allow you to change direction
                     if (card.value != 'queen' && card.value > lastCardInStack.value) return false;
+                // Can't place a queen on a stack with no direction yet
+                }else if (card.value == 'queen' && stack.direction == null){
+                    return false;
                 }
 
-                console.log('Passed');
+                // console.log('Passed');
             }
         }
     }

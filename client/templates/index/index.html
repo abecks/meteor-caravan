@@ -13,15 +13,9 @@
         <div>
             <a href="/how-to-play" class="btn btn-large">Learn how to play</a>
             &nbsp;
-            {{#if currentUser}}
-                <button id="join-game" class="btn btn-large btn-primary">Find an opponent</button>
-                &nbsp;
-                <button id="create-game" class="btn btn-large">Create a private match</button>
-            {{ else }}
-                <a href="/register" class="btn btn-large btn-success">Register</a>
-                &nbsp;
-                <a href="/login" class="btn btn-large btn-success">Log in</a>
-            {{/if}}
+            <button id="join-game" class="btn btn-large btn-primary">Find an opponent</button>
+            &nbsp;
+            <button id="create-game" class="btn btn-large">Create a private match</button>
         </div>
     </div>
 

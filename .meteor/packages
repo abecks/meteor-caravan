@@ -9,3 +9,4 @@ less
 accounts-password
 backbone
 standard-app-packages
+meteor-accounts-anonymous

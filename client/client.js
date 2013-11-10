@@ -1,16 +1,36 @@
+// App is in a loading state by default
 Session.setDefault('loading', true);
+Session.setDefault('cardSelected', false);
 
-/**
- * Global template helper functions.
- */
+// Meteor startup
+// --------------------------------------
+Meteor.startup(function(){
+    // No longer loading
+    Session.set('loading', false);
+});
+
+// Global template helper functions
+// --------------------------------------
+
 // Get current user in a template
 Handlebars.registerHelper('user', function(){
     return Meteor.user();
 });
 
+// Fully registered user, not a guest
+Handlebars.registerHelper('realUser', function(){
+    return Meteor.user() != null && Meteor.user().email != null;
+})
+
 // Determine if the app has loaded
 Handlebars.registerHelper('isLoading', function(){
     return Session.get('loading');
+});
+
+// Determine whether the user is a guest
+Handlebars.registerHelper('isGuest', function(){
+    var user = Meteor.user();
+    return user && typeof user.email == 'undefined';
 });
 
 // Determine if user is an admin
@@ -37,86 +57,50 @@ Handlebars.registerHelper("match", function(){
 });
 
 
-Meteor.startup(function(){
-    Session.set('loading', false);
-});
 
-
-
-Template.index.events({
-    // Create game
-    'click #create-game': function(e){
-        e.preventDefault();
-        createGame();
-    },
-
-    // Join game
-    'click #join-game': function(e){
-        e.preventDefault();
-        joinGame();
-    },
-
-    // Delete games
-    'click #delete-games': function(e){
-        e.preventDefault();
-        Meteor.call('deleteGames');
-    }
-});
+// Global functions for the client
+// --------------------------------------
 
 /**
  * Creates a new game.
  */
-var createGame = function(){
+ _createGame = function(){
     // Ask the server to create a game
     var game = Meteor.call('createGame', function(err, id){
         if(err) console.log(err);
         Router.go('match/'+id);
     });
+ }
+createGame = function(){
+    // Log the user in first
+    if(Meteor.user() == null){
+        Meteor.loginAnonymously(_createGame);
+    }else{
+        _createGame();
+    }
 };
 
 /**
  * Joins an existing game.
  */
-var joinGame = function(){
+ _joinGame = function(){
     // Ask the server for a game ID
     var matchId = Meteor.call('joinGame', function(err, matchId){
         if(err) console.log(err);
         if(matchId) Router.go('match/'+matchId);
     });
+ }
+joinGame = function(){
+
+    // Log the user in first
+    if(Meteor.user() == null){
+        Meteor.loginAnonymously(_joinGame);
+    }else{
+         _joinGame();
+    }
 };
 
 
-Meteor.methods({
-
-    /**
-     * Client stub.
-     * Plays the specified card (does no rule checks).
-     * @param match
-     * @param caravan
-     * @param card
-     * @param target
-     */
-   'playCard': function(matchId,caravan,card,target){
-        showMove(null,caravan,card,target);
-        return true;
-   }
-});
-
-/**
- * When the game's data is updated.
- */
-Deps.autorun(function(){
-    var gamesCollection = Games.find({ _id: Session.get('match')});
-
-    gamesCollection.observeChanges({
-        'removed': function(){
-            Router.go('');
-        },
-        'changed': function(){
-            updateCaravanValues();
-        }
-    });
-});
 
 /**
  * Determine the seat of the player's opponent.
@@ -126,24 +110,6 @@ getOpponent = function(){
     var match = getMatch();
     return (match.player1 == Meteor.user().username) ? 'player2' : 'player1';
 };
-
-/**
- * When the moves are updated.
- */
-Deps.autorun(function(){
-    var movesCollection = Moves.find();
-    movesCollection.observe({
-        'added': function(move){
-            if(typeof move == 'undefined') return false;
-
-            // Dont show the move if the card is already rendered
-            var card = $('.card[data-id='+move.card.id+']');
-            if(card.length > 0) return false;
-
-            showMove(move.player,move.caravan,move.card,move.target);
-        }
-    });
-});
 
 /**
  * Show the player's move.
@@ -217,7 +183,7 @@ showMove = function(player,caravan,card,target){
     updateCaravanValues();
 };
 
-var updateCaravanValues = function(){
+updateCaravanValues = function(){
     var game = getMatch();
 
     $('.oversold').removeClass('oversold');
@@ -234,6 +200,65 @@ var updateCaravanValues = function(){
     });
 };
 
-Meteor.startup(function(){
-    Session.set('cardSelected', false);
+
+// Client stub methods
+// --------------------------------------
+
+Meteor.methods({
+
+    /**
+     * Client stub.
+     * Plays the specified card (does no rule checks).
+     * @param match
+     * @param caravan
+     * @param card
+     * @param target
+     */
+   'playCard': function(matchId,caravan,card,target){
+        showMove(null,caravan,card,target);
+        return true;
+   }
+});
+
+
+
+// @todo: move these bastards somewhere more appropriate
+/**
+ * When the moves are updated.
+ */
+Deps.autorun(function(){
+    var movesCollection = Moves.find();
+    movesCollection.observe({
+        'added': function(move){
+            if(typeof move == 'undefined') return false;
+
+            // Dont show the move if the card is already rendered
+            var card = $('.card[data-id='+move.card.id+']');
+            if(card.length > 0) return false;
+
+            showMove(move.player,move.caravan,move.card,move.target);
+        }
+    });
+});
+
+/**
+ * When the game's data is updated.
+ */
+Deps.autorun(function(){
+    var gamesCollection = Games.find({ _id: Session.get('match')});
+
+    gamesCollection.observeChanges({
+        'removed': function(){
+
+            if(Session.get('matchLoaded')){
+                // Our match has been removed, go back to the main screen
+                Router.go('');
+            }
+        },
+        'changed': function(){
+            if(Session.get('matchLoaded')){
+                updateCaravanValues();
+            }
+        }
+    });
 });

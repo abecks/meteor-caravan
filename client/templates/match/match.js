@@ -1,28 +1,49 @@
 // Create minimongo objects
 Moves = new Meteor.Collection("moves");
 
-// Subscribe to collection on startup.
-Deps.autorun(function () {
-    Session.set('gamesLoaded', false);
 
-    // Subscribe to the match
-    Meteor.subscribe('match', Session.get('match'), function onComplete() {
-        Session.set('gamesLoaded', true);
+subscribeToMatch = function(tmpl){
+    // Subscribe to the match when the template is instanced
+    tmpl.matchHandler = Meteor.subscribe('match', Session.get('match'), function onComplete(){
+        Session.set('matchLoaded', true);
 
-        // Subscribe to the chat
-        Meteor.subscribe('messages', Session.get('match'));
+        // Subscribe to the match chat
+        tmpl.chatHandler = Meteor.subscribe('messages', Session.get('match'));
 
-        // Subscribe to the game moves
-        Meteor.subscribe('moves', Session.get('match'));
+        // Subscribe to the moves collection
+        tmpl.movesHandler = Meteor.subscribe('moves', Session.get('match'));
     });
-});
+}
+
+Template.match.created = function(){
+    var tmpl = this;
+
+    Session.set('matchLoaded', false);
+
+    // Determine if the user is already logged in, or needs to be authenticated as a guest
+    if(Meteor.user() == null){
+        Meteor.loginAnonymously(function(){
+            subscribeToMatch(tmpl);
+        });
+    }else{
+        subscribeToMatch(tmpl);
+    }
+}
+
+// Stop subscriptions when the template is destroyed
+Template.match.destroyed = function(){
+    this.matchHandler.stop();
+    this.chatHandler.stop();
+    this.movesHandler.stop();
+    Session.set('matchLoaded', false);
+}
 
 Template.match.matchId = function () {
     return Session.get('match');
 };
 
 Template.match.matchLoaded = function () {
-    return Session.get('gamesLoaded');
+    return Session.get('matchLoaded');
 };
 
 Template.match.matchVisibility = function () {
@@ -58,6 +79,103 @@ Template.match.waitingForOpponent = function () {
         return match.player1 == null;
     }
 };
+
+// Match specific functions
+// ------------------------------
+
+/**
+ * Returns the current game.
+ * @returns {*|Cursor}
+ */
+getMatch = function () {
+    return Games.findOne({ _id: Session.get('match') });
+};
+
+/**
+ * Creates clickable controls to place cards.
+ */
+showCaravanControls = function () {
+
+    // Determine the player's seat
+    var seat = Session.get('seat'),
+        match = getMatch(),
+        caravansSetup = 0,
+        $marker = $('<button></button>', {
+            'class': 'card card-marker marker-stack select-caravan'
+        });
+
+    // Have all of the caravans been setup? (Had a card placed once)
+    $.each(match.caravans, function (i, caravan) {
+        if (caravan[seat].setup) {
+            caravansSetup++;
+        } else {
+            var $caravan = $('.caravan:eq(' + i + ')'),
+                $position = $caravan.children('.' + seat + '-cards');
+            // Place a marker here
+            $marker.clone().appendTo($position);
+        }
+    });
+
+    // If all of the caravans have been setup, place a marker in each caravan
+    if (caravansSetup == 3) {
+        $('.caravan').each(function () {
+
+            var caravan = $(this).index();
+            var $newMarker = $marker.clone().appendTo($(this).find('.' + seat + '-cards'));
+
+            // Find the active card
+            var $card = $('#deck').find('.card.active'),
+                card = {
+                    id: $card.data('id'),
+                    suit: $card.data('suit'),
+                    value: $card.data('value')
+                };
+
+            // Verify the move is legal
+            var match = getMatch();
+            if (!isLegalMove(match.caravans[caravan][getSeat(Meteor.user(), match)], card, null)) {
+                $newMarker.addClass('illegal-move');
+            } else {
+                $newMarker.removeClass('illegal-move');
+            }
+        });
+    }
+};
+
+/**
+ * Destroys the caravan controls.
+ */
+hideCaravanControls = function () {
+    $('.card-marker').remove();
+};
+
+
+pollTimer = false;
+updatePollTime = function () {
+    var match = getMatch();
+
+    // If the player is not in a match, kill the timer
+    if (match == null && pollTimer) {
+        clearInterval(pollTimer);
+        pollTimer = false;
+    }
+
+    Meteor.call('updatePollTime', match._id, function (err, id) {
+        if (err) console.log(err);
+    });
+};
+
+
+/*
+ window.onbeforeunload = function(){
+ // Currently in a match
+ if(Session.get('matchLoaded')){
+ return confirm('Are you sure you want to leave the game?');
+ }
+
+ return true;
+ };*/
+
 
 Template.match.events = {
     'click .select-caravan': function (e) {
@@ -122,7 +240,6 @@ Template.match.events = {
             var match = getMatch();
             if (!isLegalMove(match.caravans[caravanIndex][stack], card, target)) return false;
 
-
             // Play card
             Meteor.call('playCard', Session.get('match'), caravanIndex, card, target);
             Session.set('cardSelected', false);
@@ -150,20 +267,36 @@ Template.match.events = {
     }
 };
 
+
+
 /**
- * Returns the current game.
- * @returns {*|Cursor}
+ * Runs when a card is selected.
  */
-getMatch = function () {
-    return Games.findOne({ _id: Session.get('match') });
-};
+Deps.autorun(function () {
+    hideCaravanControls();
+
+    if (Session.get('cardSelected')) {
+        var $card = $('#deck').find('.card.active'),
+            card = {
+                id: $card.data('id'),
+                suit: $card.data('suit'),
+                value: $card.data('value')
+            };
+
+        if (!isNaN($card.data('value')) || $card.data('value') == 'queen')
+            showCaravanControls();
+    }
+});
+
+
+
 
 
 /**
  * Runs when the game data is loaded.
  */
 Deps.autorun(function () {
-    if (Session.get('gamesLoaded')) {
+    if (Session.get('matchLoaded')) {
         Session.set('seat', undefined); // Clear the seat from any previous games
         var match = getMatch();
         if (typeof match == 'undefined') return false;
@@ -189,105 +322,3 @@ Deps.autorun(function () {
         pollTimer = false;
     }
 });
-
-/**
- * Creates clickable controls to place cards.
- */
-var showCaravanControls = function () {
-    // Determine the player's seat
-    var seat = Session.get('seat'),
-        match = getMatch(),
-        caravansSetup = 0,
-        $marker = $('<button></button>', {
-            'class': 'card card-marker marker-stack select-caravan'
-        });
-
-    // Have all of the caravans been setup? (Had a card placed once)
-    $.each(match.caravans, function (i, caravan) {
-        if (caravan[seat].setup) {
-            caravansSetup++;
-        } else {
-            var $caravan = $('.caravan:eq(' + i + ')'),
-                $position = $caravan.children('.' + seat + '-cards');
-            // Place a marker here
-            $marker.clone().appendTo($position);
-        }
-    });
-
-    // If all of the caravans have been setup, place a marker in each caravan
-    if (caravansSetup == 3) {
-        $('.caravan').each(function () {
-            var caravan = $(this).index();
-            var $newMarker = $marker.clone().appendTo($(this).find('.' + seat + '-cards'));
-
-            // Find the active card
-            var $card = $('#deck').find('.card.active'),
-                card = {
-                    id: $card.data('id'),
-                    suit: $card.data('suit'),
-                    value: $card.data('value')
-                };
-
-            // Verify the move is legal
-            var match = getMatch();
-            if (!isLegalMove(match.caravans[caravan][getSeat(Meteor.user(), match)], card, null)) {
-                $newMarker.addClass('illegal-move');
-            } else {
-                $newMarker.removeClass('illegal-move');
-            }
-        });
-    }
-};
-
-/**
- * Destroys the caravan controls.
- */
-var hideCaravanControls = function () {
-    $('.card-marker').remove();
-};
-
-/**
- * Runs when a card is selected.
- */
-Deps.autorun(function () {
-    if (Session.get('cardSelected')) {
-
-        var $card = $('#deck').find('.card.active'),
-            card = {
-                id: $card.data('id'),
-                suit: $card.data('suit'),
-                value: $card.data('value')
-            };
-
-        console.log($card.data('value'), isNaN($card.data('value')));
-        if (!isNaN($card.data('value')))
-            showCaravanControls();
-    } else {
-        hideCaravanControls();
-    }
-});
-
-var pollTimer = false;
-updatePollTime = function () {
-    var match = getMatch();
-
-    // If the player is not in a match, kill the timer
-    if (match == null && pollTimer) {
-        clearInterval(pollTimer);
-        pollTimer = false;
-    }
-
-    Meteor.call('updatePollTime', match._id, function (err, id) {
-        if (err) console.log(err);
-    });
-};
-
-/*
- window.onbeforeunload = function(){
- // Currently in a match
- if(Session.get('gamesLoaded')){
- return confirm('Are you sure you want to leave the game?');
- }
-
- return true;
- };*/

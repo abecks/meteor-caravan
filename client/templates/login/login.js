@@ -8,7 +8,7 @@ Template.login.events({
         var email = $("#inputEmail").val(),
             password = $("#inputPassword").val();
 
-        // Should validate email and password here
+        // Should validate email and password fields here
 
 
         // Clear loginError flag
